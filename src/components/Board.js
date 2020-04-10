@@ -3,10 +3,6 @@ import { connect } from 'react-redux';
 import './Board.css';
 
 class Board extends React.Component {
-  state = {
-    combList: []
-  }
-
   componentDidMount() {
     window.drawElements(this.props.board);
   }

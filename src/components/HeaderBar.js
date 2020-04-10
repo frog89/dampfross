@@ -3,8 +3,6 @@ import Dices from './Dices';
 import Expand from '../images/expand.png';
 import Collapse from '../images/collapse.png';
 import { connect } from 'react-redux';
-import { setScoreTableVisibility } from '../actions/headerBarActions';
-
 import './NavBar.css';
 
 class HeaderBar extends React.Component {
@@ -40,9 +38,16 @@ class HeaderBar extends React.Component {
   }
 }
 
+const setScoreTableVisibility = (isVisible) => {
+  return {
+    type: 'SET_SCORETABLE_VISIBILITY',
+    isVisible
+  }
+} 
+
 const mapStateToProps = (state) => {
   return {
-    isScoreTableVisible: state.isScoreTableVisible
+    isScoreTableVisible: state.scoreTable.isVisible
   }
 }
 

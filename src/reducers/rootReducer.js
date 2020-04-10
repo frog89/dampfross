@@ -4,7 +4,13 @@
 //const COMB_WATER = 14; // Water (Lake or sea)
 
 const initialState = {
-  isScoreTableVisible: true,
+  scoreTable: {
+    isVisible: true,
+    rows: [{ no:1, fa: 20, ow: 20, mp: 20, sk: 20, tb: 20}],
+    columns: [
+      { field: "no", headerName: "No.", resizable: false, editable: false, width: 120 }
+    ]  
+  },
   users: [
     { id: 'fa', name: 'Frank', penColor: 'orange' },
     { id: 'ow', name: 'Othmar', penColor: 'pink' },
@@ -45,9 +51,31 @@ const rootReducer = (state = initialState, action) => {
     case 'SET_SCORETABLE_VISIBILITY':
       return {
         ...state,
-        isScoreTableVisible: action.isVisible
+        scoreTable: {
+          ...state.scoreTable,
+          isVisible: action.isVisible
+        }
       }
-    
+      
+    case 'SET_SCORETABLE_ROWS':
+      let newState = {
+        ...state,
+        scoreTable: {
+          ...state.scoreTable,
+          rows: action.rows
+        }
+      };
+      return newState;
+      
+    case 'SET_SCORETABLE_COLUMNS':
+      return {
+        ...state,
+        scoreTable: {
+          ...state.scoreTable,
+          columns: action.columns
+        }
+      }
+          
     default:
       return state;
   }

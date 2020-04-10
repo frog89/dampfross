@@ -7,50 +7,53 @@ import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 class ScoreTable extends React.Component {
   gridOptions = {};
 
-  state = {
-    rows: [{ no:1, fa: 20, ow: 20, mp: 20, sk: 20, tb: 20}],
-    columns: [
-      { field: "no", headerName: "No.", resizable: false, editable: false, width: 120 }
-    ]
-  };
-
   componentDidMount() {
     let userColumns = this.props.users.map((user, k) => {
       return ({
-        field: user.id,
+        valueGetter: function(params) {
+          return params.data[user.id];
+         },
+        valueSetter: function(params) {
+          let newValue = parseInt(params.newValue);
+          newValue = isNaN(newValue) ? params.oldValue : newValue;
+          params.data[user.id] = newValue;
+          return true;
+        },
         headerName: user.name,
         resizable: true, 
         editable: true
       });
     });
-    let cols = this.state.columns;
-    cols.push(...userColumns);
-    this.setState({columns: cols, rows: this.state.rows });
+    let cols = this.props.columns;
+    if (cols.length <= 1) {
+      cols.push(...userColumns);
+      this.props.setScoreTableColumns(cols);  
+    }
   }
   
   onGridReady = (params) => {
     this.gridOptions.api = params.api;
     this.gridOptions.columnApi = params.columnApi;
 
-    this.gridOptions.api.setColumnDefs(this.state.columns);
+    this.gridOptions.api.setColumnDefs(this.props.columns);
     this.gridOptions.api.sizeColumnsToFit();
   }
 
   addRow = () => {
-    let rows = this.state.rows;
+    let rows = this.props.rows;
     let lastRow = rows[rows.length-1];
     rows = [...rows, {...lastRow, no: lastRow.no + 1}];
-    this.setState({rows});
+    this.props.setScoreTableRows(rows);
   }
 
   delRow = () => {
-    let rows = this.state.rows;
+    let rows = this.props.rows;
     if (rows.length <= 1) {
       return;
     }
     rows.pop();
     this.gridOptions.api.setRowData(rows);
-    this.setState({rows});
+    this.props.setScoreTableRows(rows);
   }
 
   render() {
@@ -78,8 +81,9 @@ class ScoreTable extends React.Component {
           <div className="col-12 ag-theme-balham p-0">
             <AgGridReact
               onGridReady={this.onGridReady}
-              columnDefs={this.state.columns}
-              rowData={this.state.rows}>
+              columnDefs={this.props.columns}
+              rowData={this.props.rows}
+              >
             </AgGridReact>
           </div>
         </div>
@@ -88,10 +92,34 @@ class ScoreTable extends React.Component {
   }
 }
 
+const setScoreTableRows = (rows) => {
+  return {
+    type: 'SET_SCORETABLE_ROWS',
+    rows
+  }
+} 
+
+const setScoreTableColumns = (columns) => {
+  return {
+    type: 'SET_SCORETABLE_COLUMNS',
+    columns
+  }
+} 
+
 const mapStateToProps = (state) => {
   return {
-    users: state.users
+    users: state.users,
+    isScoreTableVisible: state.scoreTable.isVisible,
+    rows: state.scoreTable.rows,
+    columns: state.scoreTable.columns
   }
 }
 
-export default connect(mapStateToProps)(ScoreTable);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setScoreTableRows: rows => { dispatch(setScoreTableRows(rows)) },
+    setScoreTableColumns: columns => { dispatch(setScoreTableColumns(columns)) },
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ScoreTable);
