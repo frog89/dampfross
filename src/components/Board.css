@@ -1,0 +1,12 @@
+#large-container {
+  overflow: hidden;
+}
+
+#scroll-container {
+  width: calc(100%);
+  height: calc(100vh - 70px);
+  overflow: auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border: 1px solid grey;
+}
