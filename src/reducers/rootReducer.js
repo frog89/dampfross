@@ -56,7 +56,7 @@ const rootReducer = (state = initialState, action) => {
           isVisible: action.isVisible
         }
       }
-      
+
     case 'SET_SCORETABLE_ROWS':
       let newState = {
         ...state,
@@ -65,6 +65,7 @@ const rootReducer = (state = initialState, action) => {
           rows: action.rows
         }
       };
+      //console.log('SET_SCORETABLE_ROWS', newState);
       return newState;
       
     case 'SET_SCORETABLE_COLUMNS':

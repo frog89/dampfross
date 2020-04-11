@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+
 import './Board.css';
 
 class Board extends React.Component {
@@ -20,7 +21,7 @@ class Board extends React.Component {
             height: `${largeContiHeight}px`
           }}
         >
-          <div id="container">
+          <div id="konvaContainer">
           </div>
         </div>
       </div>

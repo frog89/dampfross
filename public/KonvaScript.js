@@ -15,14 +15,29 @@ const combDiffY = COMB_RADIUS * 0.5;
 // so scrolling will look smoother
 const PADDING = 800;
 
-let stage = null;
-let scrollContainer = null;
-
-function getCombRadius() {
-  return COMB_RADIUS;
+let konvaState = {
+  stage: null,
+  drawMouseOverLine: null,
+  drawStartComb: null
 }
 
-function getColor(comb) {
+function getCombTypeName(comb) {
+  if (comb===COMB_MOUNTAIN) {
+    return 'm';
+  } else if (comb===COMB_TOWN) {
+    return 't';
+  } else if (comb===COMB_WATER) {
+    return 'w';
+  }
+  return 'e';
+}
+
+function getCombName(comb, x, y) {
+  let combTypeName = getCombTypeName(comb);
+  return `comb-${combTypeName}-${x}-${y}`;
+}
+
+function getCombColor(comb) {
   if (comb===COMB_MOUNTAIN) {
     return '#E67300';
   } else if (comb===COMB_TOWN) {
@@ -108,10 +123,11 @@ function addComb(layer, x, y, comb) {
   let combMiddle = getCombMiddle(x, y);
 
   let polygon = new Konva.RegularPolygon({
+    name: getCombName(comb, x, y),
     x: combMiddle.x,
     y: combMiddle.y,
     radius: COMB_RADIUS,
-    fill: getColor(comb),
+    fill: getCombColor(comb),
     sides: 6,
     stroke: 'black',
     strokeWidth: 1
@@ -235,23 +251,26 @@ function getCombMiddle(x, y) {
   return { x: (x+1) * 2 * combDiffX + diffX, y: (y+1) * 1.5 * COMB_RADIUS };
 }
 
-function repositionStage() {
+function repositionStage(scrollContainer) {
+  if (konvaState.stage === null) {
+    return;
+  }
   var dx = scrollContainer.scrollLeft - PADDING;
   var dy = scrollContainer.scrollTop - PADDING;
-  stage.container().style.transform =
+  konvaState.stage.container().style.transform =
     'translate(' + dx + 'px, ' + dy + 'px)';
-  stage.x(-dx);
-  stage.y(-dy);
-  stage.batchDraw();
+  konvaState.stage.x(-dx);
+  konvaState.stage.y(-dy);
+  konvaState.stage.batchDraw();
 }
 
 function initStage(width, height) {
-  stage = new Konva.Stage({
-    container: 'container',
+  let stage = new Konva.Stage({
+    container: 'konvaContainer',
     width: window.innerWidth + PADDING * 2,
     height: window.innerHeight + PADDING * 2
   });
-  scrollContainer = document.getElementById('scroll-container');
+  konvaState.stage = stage;
 }
 
 function drawElements(board) {  
@@ -259,13 +278,18 @@ function drawElements(board) {
   //console.log('combs', combs);
   //console.log('borders', borders);
   //console.log('rivers', rivers);
+  let scrollContainer = document.getElementById('scroll-container');
   let layer = null;
-  if (stage) {
-    layer = stage.getLayers()[0];
+  if (konvaState.stage) {
+    layer = konvaState.stage.getLayers()[0];
   } else {
     initStage(width, height);
     layer = new Konva.Layer();
-    stage.add(layer);
+    layer.on('click', event => onLayerMouseClick(layer, event));
+    layer.on('contextmenu', event => onLayerRightMouseClick(layer, event));
+    layer.on('mouseover', event => onLayerMouseOver(layer, event));  
+    layer.on('dblclick', event => onLayerMouseDblClick(layer, event));  
+    konvaState.stage.add(layer);
   }
 
   let townTextIdx = 0;
@@ -297,15 +321,13 @@ function drawElements(board) {
             addTextObject(layer, x, y, textObject, textObjects.texts[textIdx]);
             textIdx++;  
           }
-        }
-  
-        //layer.add(createRiver(x, y, rivers[idx]));
+        }  
       }
     }  
   }
   
   layer.draw();
     
-  scrollContainer.addEventListener('scroll', repositionStage);
-  repositionStage();  
+  scrollContainer.addEventListener('scroll', () => repositionStage(scrollContainer));
+  repositionStage(scrollContainer);  
 }

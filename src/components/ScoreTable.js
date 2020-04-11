@@ -40,6 +40,7 @@ class ScoreTable extends React.Component {
   }
 
   addRow = () => {
+    this.gridOptions.api.stopEditing(false);
     let rows = this.props.rows;
     let lastRow = rows[rows.length-1];
     rows = [...rows, {...lastRow, no: lastRow.no + 1}];
@@ -47,6 +48,7 @@ class ScoreTable extends React.Component {
   }
 
   delRow = () => {
+    this.gridOptions.api.stopEditing(false);
     let rows = this.props.rows;
     if (rows.length <= 1) {
       return;
