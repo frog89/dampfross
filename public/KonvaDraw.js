@@ -1,12 +1,67 @@
+const NAME_START_COMB = "comb";
+const NAME_START_DRAWLINE = "line-draw";
+const NAME_START_MOUSEOVER_LINE = "line-mouseover";
 
-function findComb(layer, event) {
-  ({layerX, layerY} = event.evt);
-  let smallestDistance = COMB_RADIUS;
+ function getRelativePointerPosition(node) {
+  // the function will return pointer position relative to the passed node
+  var transform = node.getAbsoluteTransform().copy();
+  // to detect relative position we need to invert transform
+  transform.invert();
+
+  // get pointer (say mouse or touch) position
+  var pos = node.getStage().getPointerPosition();
+
+  // now we find relative point
+  return transform.point(pos);
+}
+
+function findComb(layer) {
+  return findShape(layer, NAME_START_COMB);
+}
+
+function findDrawLine(layer) {
+  return findShape(layer, NAME_START_DRAWLINE);
+}
+
+function sqr(x) { return x * x }
+
+function dist2(v, w) { 
+  return sqr(v.x - w.x) + sqr(v.y - w.y) 
+}
+
+function distToSegmentSquared(p, v, w) {
+  var l2 = dist2(v, w);
+  if (l2 == 0) return dist2(p, v);
+  var t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
+  t = Math.max(0, Math.min(1, t));
+  return dist2(p, { x: v.x + t * (w.x - v.x),
+                    y: v.y + t * (w.y - v.y) });
+}
+
+function distToSegment(p, v, w) { 
+  return Math.sqrt(distToSegmentSquared(p, v, w)); 
+}
+
+function findShape(layer, shapeNameStart) {
+  let mousePos = getRelativePointerPosition(layer);
+
+  let smallestDistance = 1000000;
   let combs = layer.find(node => {
     let nm = node.getName();
-    if (nm && nm.startsWith("comb")) {
-      let nodePos = node.position();
-      let distanceToMouse = Math.hypot(layerX-nodePos.x, layerY-nodePos.y);
+    if (nm && nm.startsWith(shapeNameStart)) {
+      //console.log('findShape', node);
+      let nodePos = null;
+      let distanceToMouse = 0;
+      if (shapeNameStart.startsWith("line")) {
+        let points = node.attrs.points;
+        let v = { x: points[0], y:points[1] }
+        let w = { x: points[2], y:points[3] }
+        distanceToMouse = distToSegment(mousePos, v, w);
+      } else {
+        nodePos = node.position();
+        distanceToMouse = Math.hypot(mousePos.x-nodePos.x, mousePos.y-nodePos.y);
+      }
+  
       if (distanceToMouse < smallestDistance) {
         smallestDistance = distanceToMouse;
         return true;
@@ -30,12 +85,17 @@ function cancelDraw(layer) {
 }
 
 function onLayerMouseClick(layer, event) {
+  //console.log('onLayerMouseClick', event);
+  if (event.evt.ctrlKey) {
+    tryDeleteDrawLine(layer);
+    return;
+  }
   if (event.evt.button !== 0) {
     cancelDraw(layer);
     return;
   }
 
-  let comb = findComb(layer, event);
+  let comb = findComb(layer);
   if (comb) {
     if (konvaState.drawStartComb) {
       drawLine(layer, konvaState.drawStartComb, comb, 'orange');
@@ -44,7 +104,13 @@ function onLayerMouseClick(layer, event) {
   }
 }
 
-function onLayerMouseDblClick(layer, event) {
+function tryDeleteDrawLine(layer) {
+  console.log('tryDeleteDrawLine');
+  let drawLine = findDrawLine(layer);
+  if (drawLine) {
+    drawLine.destroy();
+    layer.draw();
+  }
 }
 
 function onLayerRightMouseClick(layer, event) {
@@ -57,11 +123,11 @@ function onLayerMouseOver(layer, event) {
     return;
   }
 
-  let comb = findComb(layer, event);
+  let comb = findComb(layer);
   if (comb) {
-    let isSameComb = comb.attrs.x === konvaState.drawStartComb.attrs.x && 
+    let isStartComb = comb.attrs.x === konvaState.drawStartComb.attrs.x && 
       comb.attrs.y === konvaState.drawStartComb.attrs.y;
-    if (!isSameComb) {
+    if (!isStartComb) {
       if (konvaState.drawMouseOverLine !== null) {
         konvaState.drawMouseOverLine.destroy();
       }
@@ -74,7 +140,7 @@ function onLayerMouseOver(layer, event) {
 
 function drawLine(layer, startComb, comb, color) {
   let linePoints = [startComb.attrs.x, startComb.attrs.y, comb.attrs.x, comb.attrs.y];
-  let name = color ? 'line-color' : 'line-mousemove';
+  let name = color ? `${NAME_START_DRAWLINE}-${color}` : NAME_START_MOUSEOVER_LINE;
   let col = color ? color : 'gray';
   line = new Konva.Line({
     x: 0,

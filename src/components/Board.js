@@ -5,7 +5,7 @@ import './Board.css';
 
 class Board extends React.Component {
   componentDidMount() {
-    window.drawElements(this.props.board);
+    window.drawElements(this.props.board, this.props.users);
   }
 
   render() {
@@ -32,7 +32,8 @@ class Board extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    board: state.board
+    board: state.board,
+    users: state.users,
   }
 }
 

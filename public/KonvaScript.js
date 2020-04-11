@@ -7,7 +7,7 @@ const TEXTOBJ_BIG = 18;
 const TEXTOBJ_MIDDLE = 19;
 const TEXTOBJ_SMALL = 20;
 
-const COMB_RADIUS = 18;
+const COMB_RADIUS = 23;
 const combDiffX = COMB_RADIUS * Math.cos(30.0 * Math.PI / 180.0);
 const combDiffY = COMB_RADIUS * 0.5;
 
@@ -18,7 +18,8 @@ const PADDING = 800;
 let konvaState = {
   stage: null,
   drawMouseOverLine: null,
-  drawStartComb: null
+  drawStartComb: null,
+  users: null
 }
 
 function getCombTypeName(comb) {
@@ -273,23 +274,28 @@ function initStage(width, height) {
   konvaState.stage = stage;
 }
 
-function drawElements(board) {  
+function drawElements(board, users) {  
   ({ width, height, combs, borders, rivers, townTexts, textObjects } = board);
+  konvaState.users = users;
   //console.log('combs', combs);
   //console.log('borders', borders);
   //console.log('rivers', rivers);
   let scrollContainer = document.getElementById('scroll-container');
-  let layer = null;
+  let mapLayer = null;
+  let puppetLayer = null;
   if (konvaState.stage) {
-    layer = konvaState.stage.getLayers()[0];
+    let layers = konvaState.stage.getLayers();
+    mapLayer = layers[0];
+    puppetLayer = layers[1];
   } else {
     initStage(width, height);
-    layer = new Konva.Layer();
-    layer.on('click', event => onLayerMouseClick(layer, event));
-    layer.on('contextmenu', event => onLayerRightMouseClick(layer, event));
-    layer.on('mouseover', event => onLayerMouseOver(layer, event));  
-    layer.on('dblclick', event => onLayerMouseDblClick(layer, event));  
-    konvaState.stage.add(layer);
+    mapLayer = new Konva.Layer();
+    puppetLayer = new Konva.Layer();
+    mapLayer.on('click', event => onLayerMouseClick(mapLayer, event));
+    mapLayer.on('contextmenu', event => onLayerRightMouseClick(mapLayer, event));
+    mapLayer.on('mouseover', event => onLayerMouseOver(mapLayer, event));  
+    konvaState.stage.add(mapLayer);
+    konvaState.stage.add(puppetLayer);
   }
 
   let townTextIdx = 0;
@@ -301,24 +307,24 @@ function drawElements(board) {
 
         if (kind === 0) {
           let comb = combs.data[idx] - combs.offset;
-          addComb(layer, x, y, comb);
+          addComb(mapLayer, x, y, comb);
         } else if (kind === 1) {
           let river = rivers.data[idx] - rivers.offset;
-          addRiver(layer, x, y, river);
+          addRiver(mapLayer, x, y, river);
         } else if (kind === 2) {
           let border = borders.data[idx] - borders.offset;
-          addBorder(layer, x, y, border);
+          addBorder(mapLayer, x, y, border);
 
           let comb = combs.data[idx] - combs.offset;
           if (comb === COMB_TOWN) {
-            addInsideTownText(layer, x, y, townTexts.inside[townTextIdx]);
-            addOutsideTownText(layer, x+1, y, townTexts.outside[townTextIdx]);
+            addInsideTownText(mapLayer, x, y, townTexts.inside[townTextIdx]);
+            addOutsideTownText(mapLayer, x+1, y, townTexts.outside[townTextIdx]);
             townTextIdx++;
           }
 
           let textObject = textObjects.data[idx] - textObjects.offset;
           if (textObject > 0) {
-            addTextObject(layer, x, y, textObject, textObjects.texts[textIdx]);
+            addTextObject(mapLayer, x, y, textObject, textObjects.texts[textIdx]);
             textIdx++;  
           }
         }  
@@ -326,8 +332,10 @@ function drawElements(board) {
     }  
   }
   
-  layer.draw();
-    
+  mapLayer.draw();
+  initPuppets(puppetLayer);
+  puppetLayer.draw();
+
   scrollContainer.addEventListener('scroll', () => repositionStage(scrollContainer));
   repositionStage(scrollContainer);  
 }
