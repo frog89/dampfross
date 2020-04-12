@@ -111,9 +111,9 @@ const setScoreTableColumns = (columns) => {
 const mapStateToProps = (state) => {
   return {
     users: state.users,
-    isScoreTableVisible: state.scoreTable.isVisible,
-    rows: state.scoreTable.rows,
-    columns: state.scoreTable.columns
+    isScoreTableVisible: state.gameStatus.scoreTable.isVisible,
+    rows: state.gameStatus.scoreTable.rows,
+    columns: state.gameStatus.scoreTable.columns
   }
 }
 

@@ -287,15 +287,19 @@ function drawElements(board, users) {
     let layers = konvaState.stage.getLayers();
     mapLayer = layers[0];
     puppetLayer = layers[1];
+    dragLayer = layers[2];
   } else {
     initStage(width, height);
     mapLayer = new Konva.Layer();
     puppetLayer = new Konva.Layer();
+    dragLayer = new Konva.Layer();
     mapLayer.on('click', event => onLayerMouseClick(mapLayer, event));
     mapLayer.on('contextmenu', event => onLayerRightMouseClick(mapLayer, event));
     mapLayer.on('mouseover', event => onLayerMouseOver(mapLayer, event));  
     konvaState.stage.add(mapLayer);
     konvaState.stage.add(puppetLayer);
+    konvaState.stage.add(dragLayer);
+    initPuppets(puppetLayer, dragLayer);
   }
 
   let townTextIdx = 0;
@@ -333,8 +337,8 @@ function drawElements(board, users) {
   }
   
   mapLayer.draw();
-  initPuppets(puppetLayer);
   puppetLayer.draw();
+  dragLayer.draw();
 
   scrollContainer.addEventListener('scroll', () => repositionStage(scrollContainer));
   repositionStage(scrollContainer);  

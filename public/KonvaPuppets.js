@@ -1,62 +1,73 @@
+const PUPPET_OFFSET = { x: COMB_RADIUS * 1.5, y: COMB_RADIUS * 1.5 }
+const PUPPET_DELTA = { x: 0, y: COMB_RADIUS * 1.5 }
 
-function initPuppets(puppetLayer) {
-  for (let i=0; i<konvaState.users.length; i++) {
-    let u = konvaState.users[i];
-    let outerCircle = new Konva.Circle({
-      x: COMB_RADIUS,
-      y: COMB_RADIUS * i,
-      radius: COMB_RADIUS * 0.5,
-      fill: u.penColor,
-      stroke: 'black',
-      strokeWidth: 2
-    });
-    let innerCircle = new Konva.Circle({
-      radius: COMB_RADIUS * 0.2,
-      fill: 'black',
-      stroke: 'black',
-      strokeWidth: 1
-    });
-    let puppetGroup = new Konva.Group();
-    puppetGroup.add(outerCircle);
-    puppetGroup.add(innerCircle);
-    puppetLayer.add(puppetGroup);
+function resetPuppets(puppetLayer, dragLayer) {
+  for (let i=0; i<puppetLayer.children().length; i++) {
+    let puppet = puppetLayer.children()[i];
+    puppet.x = PUPPET_OFFSET.x + i * PUPPET_DELTA.x;
+    puppet.y = PUPPET_OFFSET.y + i * PUPPET_DELTA.y;
   }
 }
 
-function initDragDrop() {
-
-  konvaState.stage.on("dragstart", function(evt) {
-    var shape = evt.target;
-    // moving to another layer will improve dragging performance
-    shape.moveTo(dragLayer);
-    stage.draw();
-
-    if (tween) {
-      tween.pause();
-    }
-    shape.setAttrs({
+function initPuppets(puppetLayer, dragLayer) {
+  for (let i=0; i<konvaState.users.length; i++) {
+    let u = konvaState.users[i];
+    let x = PUPPET_OFFSET.x + i * PUPPET_DELTA.x;
+    let y = PUPPET_OFFSET.y + i * PUPPET_DELTA.y;
+    let puppetShape = new Konva.Circle({
+      x: x,
+      y: y,
+      radius: COMB_RADIUS * 0.5,
+      fill: u.penColor,
+      stroke: 'black',
+      strokeWidth: 2,
+      draggable: true,
+      shadowColor: "black",
+      shadowBlur: 10,
       shadowOffset: {
-        x: 15,
-        y: 15
+        x: 3,
+        y: 3
+      },
+      shadowOpacity: 0.6,
+      startScale: 1
+    });
+    puppetLayer.add(puppetShape);
+  }
+  initDragDrop(puppetLayer, dragLayer);
+}
+
+function initDragDrop(puppetLayer, dragLayer) {
+  konvaState.stage.on("dragstart", function(evt) {
+    var puppet = evt.target;
+    // moving to another layer will improve dragging performance
+    puppet.moveTo(dragLayer);
+    puppetLayer.draw();
+    dragLayer.draw();
+
+    puppet.setAttrs({
+      shadowOffset: {
+        x: 5,
+        y: 5
       },
       scale: {
-        x: shape.getAttr("startScale") * 1.2,
-        y: shape.getAttr("startScale") * 1.2
+        x: puppet.getAttr("startScale") * 1.2,
+        y: puppet.getAttr("startScale") * 1.2
       }
     });
   });
 
-  stage.on("dragend", function(evt) {
-    var shape = evt.target;
-    shape.moveTo(layer);
-    stage.draw();
-    shape.to({
+  konvaState.stage.on("dragend", function(evt) {
+    var puppet = evt.target;
+    puppet.moveTo(puppetLayer);
+    puppetLayer.draw();
+    dragLayer.draw();
+    puppet.to({
       duration: 0.5,
       easing: Konva.Easings.ElasticEaseOut,
-      scaleX: shape.getAttr("startScale"),
-      scaleY: shape.getAttr("startScale"),
-      shadowOffsetX: 5,
-      shadowOffsetY: 5
+      scaleX: puppet.getAttr("startScale"),
+      scaleY: puppet.getAttr("startScale"),
+      shadowOffsetX: 3,
+      shadowOffsetY: 3
     });
   });
 }

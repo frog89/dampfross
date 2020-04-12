@@ -4,12 +4,20 @@
 //const COMB_WATER = 14; // Water (Lake or sea)
 
 const initialState = {
-  scoreTable: {
-    isVisible: true,
-    rows: [{ no:1, fa: 20, ow: 20, mp: 20, sk: 20, tb: 20}],
-    columns: [
-      { field: "no", headerName: "No.", resizable: false, editable: false, width: 120 }
-    ]  
+  gameStatus: {
+    dices: {
+      redA: null,
+      whiteA: null,
+      redB: null,
+      whiteB: null  
+    },
+    scoreTable: {
+      isVisible: true,
+      rows: [{ no:1, fa: 20, ow: 20, mp: 20, sk: 20, tb: 20}],
+      columns: [
+        { field: "no", headerName: "No.", resizable: false, editable: false, width: 120 }
+      ]  
+    },
   },
   users: [
     { id: 'fa', name: 'Frank', penColor: 'orange' },
@@ -48,21 +56,42 @@ const initialState = {
 
 const rootReducer = (state = initialState, action) => {
   switch(action.type) {
+    case 'SET_DICES':
+      console.log('SET_DICES', action);
+      return {
+        ...state,
+        gameStatus: {
+          ...state.gameStatus,
+          dices: {
+            redA: action.redA,
+            whiteA: action.whiteA,
+            redB: action.redB,
+            whiteB: action.whiteB
+          }
+        }
+      }
+
     case 'SET_SCORETABLE_VISIBILITY':
       return {
         ...state,
-        scoreTable: {
-          ...state.scoreTable,
-          isVisible: action.isVisible
+        gameStatus: {
+          ...state.gameStatus,
+          scoreTable: {
+            ...state.gameStatus.scoreTable,
+            isVisible: action.isVisible
+          }
         }
       }
 
     case 'SET_SCORETABLE_ROWS':
       let newState = {
         ...state,
-        scoreTable: {
-          ...state.scoreTable,
-          rows: action.rows
+        gameStatus: {
+          ...state.gameStatus,
+          scoreTable: {
+            ...state.gameStatus.scoreTable,
+            rows: action.rows
+          }
         }
       };
       //console.log('SET_SCORETABLE_ROWS', newState);
@@ -71,9 +100,12 @@ const rootReducer = (state = initialState, action) => {
     case 'SET_SCORETABLE_COLUMNS':
       return {
         ...state,
-        scoreTable: {
-          ...state.scoreTable,
-          columns: action.columns
+        gameStatus: {
+          ...state.gameStatus,
+          scoreTable: {
+            ...state.gameStatus.scoreTable,
+            columns: action.columns
+          }
         }
       }
           

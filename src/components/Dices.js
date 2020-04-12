@@ -1,4 +1,6 @@
 import React from 'react';
+import { connect } from 'react-redux';
+
 import AnimatedDice from '../images/dice.gif';
 import White1 from '../images/dice-w1.png';
 import White2 from '../images/dice-w2.png';
@@ -18,10 +20,10 @@ import './Dices.css';
 class Dices extends React.Component {
   state={
     showAnimatedDices: false,
-    redA: null,
-    whiteA: null,
-    redB: null,
-    whiteB: null
+  }
+
+  componentDidMount() {
+    this.props.setDices(0, 0, 0, 0);
   }
 
   getRedDice = (num) => {
@@ -63,53 +65,73 @@ class Dices extends React.Component {
   }
 
   dice = () => {
-    this.setState({showAnimatedDices: true, redA: null });
+    this.props.setDices(0, 0, 0, 0);
+    this.setState({showAnimatedDices: true });
     const rA = this.getRandomDice();
     const wA = this.getRandomDice();
     const rB = this.getRandomDice();
     const wB = this.getRandomDice();
-    console.log('Dices:', rA, wA, rB, wB);
 
     setTimeout(() => {
       this.setState({
-        showAnimatedDices: false,
-        redA: this.getRedDice(rA),
-        whiteA: this.getWhiteDice(wA),
-        redB: this.getRedDice(rB),
-        whiteB: this.getWhiteDice(wB)
+        showAnimatedDices: false
       });
+      this.props.setDices(rA, wA, rB, wB);
     }, 1000);
   }
 
   render() {
+    const wuerfelButton = <button type="button" 
+          className="btn btn-primary pt-1 pb-1" 
+          onClick={this.dice}>
+        Würfeln
+      </button>;
+
     const animatedDice = (this.state.showAnimatedDices) ?
       <img src={AnimatedDice} className="aniDice pl-3" alt="dice" />
-      : <div/>;
+      : 
+      <span/>;
 
-    const dices = (this.state.redA) ?
-      <div className="col-4">
-        <img src={this.state.redA} className="dice pl-2" alt="dice" ></img>
-        <img src={this.state.whiteA} className="dice pl-2" alt="dice" ></img>
+    const dices = (this.props.dices.redA !== 0) ?
+      <span>
+        <img src={this.getRedDice(this.props.dices.redA)} className="dice pl-2" alt="dice" ></img>
+        <img src={this.getWhiteDice(this.props.dices.whiteA)} className="dice pl-2" alt="dice" ></img>
         <img src={ArrowRight} className="pl-2" alt="arrow"/> 
-        <img src={this.state.redB} className="dice pl-2" alt="dice" ></img>
-        <img src={this.state.whiteB} className="dice pl-2" alt="dice" ></img> 
-      </div>
-      : <div/>;
+        <img src={this.getRedDice(this.props.dices.redB)} className="dice pl-2" alt="dice" ></img>
+        <img src={this.getWhiteDice(this.props.dices.whiteB)} className="dice pl-2" alt="dice" ></img> 
+      </span>
+      : 
+      <span/>;
 
     return (
-      <div className="container-fluid align-self-center">
-        <div className="row">
-          <div className="col-1 align-self-center">
-            <button type="button" className="btn btn-primary pt-1 pb-1" onClick={this.dice}>Würfeln</button>
-          </div>
-          <div className="col-11">
-            {animatedDice}
-            {dices}
-          </div>
-        </div>
-      </div>
+      <span>
+        {wuerfelButton}
+        {animatedDice}
+        {dices}
+      </span>
     )
   }
 }
 
-export default Dices;
+const setDices = (redA, whiteA, redB, whiteB) => {
+  return {
+    type: 'SET_DICES',
+    redA, whiteA, redB, whiteB
+  }
+} 
+
+const mapStateToProps = (state) => {
+  return {
+    dices: state.gameStatus.dices
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setDices: (redA, whiteA, redB, whiteB) => { 
+      dispatch(setDices(redA, whiteA, redB, whiteB)) 
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Dices);
