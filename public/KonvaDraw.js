@@ -2,7 +2,64 @@ const NAME_START_COMB = "comb";
 const NAME_START_DRAWLINE = "line-draw";
 const NAME_START_MOUSEOVER_LINE = "line-mouseover";
 
- function getRelativePointerPosition(node) {
+function onLayerMouseClick(layer, event) {
+  //console.log('onLayerMouseClick', event);
+  
+  if (event.evt.button !== 0) {
+     cancelDraw(layer);
+     return;
+  }
+
+  let comb = getNearestCombToMouse(layer);
+  //console.log('onLayerMouseClick-comb', comb);
+  if (comb) {
+    if (konvaState.drawStartComb) {
+      drawLine(layer, konvaState.drawStartComb, comb, 'orange');
+    }
+    konvaState.drawStartComb = comb;
+  }
+}
+
+function onLayerMouseMove(layer, event) {
+  //console.log('onLayerMouseOver-event', event);
+  if (konvaState.drawStartComb === null) {
+    return;
+  }
+
+  let comb = getNearestCombToMouse(layer);
+  if (comb) {
+    let isStartComb = comb.x === konvaState.drawStartComb.x && 
+      comb.y === konvaState.drawStartComb.y;
+    if (!isStartComb) {
+      if (konvaState.drawMouseOverLine !== null) {
+        konvaState.drawMouseOverLine.destroy();
+      }
+    
+      let line = drawLine(layer, konvaState.drawStartComb, comb, null);
+      konvaState.drawMouseOverLine = line;
+    }
+  }
+}
+
+function onLayerRightMouseClick(layer, event) {
+  event.evt.preventDefault();
+  //cancelDraw(layer);
+}
+
+function rectMiddle(rect) {
+  return { x: rect.x + 0.5 * rect.width, y: rect.y + 0.5 * rect.height };
+}
+
+function rectContainsPoint(rect, pt) {
+  return rect.x <= pt.x && pt.x <= rect.x + rect.width &&
+    rect.y <= pt.y && pt.y <= rect.y + rect.height;
+}
+
+function pointMinus(p1, p2) {
+  return { x: p1.x - p2.x, y: p1.y - p2.y };
+}
+
+function getRelativePointerPosition(node) {
   // the function will return pointer position relative to the passed node
   var transform = node.getAbsoluteTransform().copy();
   // to detect relative position we need to invert transform
@@ -15,64 +72,37 @@ const NAME_START_MOUSEOVER_LINE = "line-mouseover";
   return transform.point(pos);
 }
 
-function findComb(layer) {
-  return findShape(layer, NAME_START_COMB);
-}
-
-function findDrawLine(layer) {
-  return findShape(layer, NAME_START_DRAWLINE);
-}
-
-function sqr(x) { return x * x }
-
-function dist2(v, w) { 
-  return sqr(v.x - w.x) + sqr(v.y - w.y) 
-}
-
-function distToSegmentSquared(p, v, w) {
-  var l2 = dist2(v, w);
-  if (l2 == 0) return dist2(p, v);
-  var t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
-  t = Math.max(0, Math.min(1, t));
-  return dist2(p, { x: v.x + t * (w.x - v.x),
-                    y: v.y + t * (w.y - v.y) });
-}
-
-function distToSegment(p, v, w) { 
-  return Math.sqrt(distToSegmentSquared(p, v, w)); 
-}
-
-function findShape(layer, shapeNameStart) {
+function getNearestCombToMouse(layer) {
   let mousePos = getRelativePointerPosition(layer);
+  let combOrigin00 = pointMinus(getCombMiddle(0, 0), 
+    {x: combDiffX, y: combDiffY });
+  let combDistance = {x: 2 * combDiffX, y: 1.5 * COMB_RADIUS };
+  let hitRect = { x: 0, y: 0, width: 2 * combDiffX, height: COMB_RADIUS };
 
-  let smallestDistance = 1000000;
-  let combs = layer.find(node => {
-    let nm = node.getName();
-    if (nm && nm.startsWith(shapeNameStart)) {
-      //console.log('findShape', node);
-      let nodePos = null;
-      let distanceToMouse = 0;
-      if (shapeNameStart.startsWith("line")) {
-        let points = node.attrs.points;
-        let v = { x: points[0], y:points[1] }
-        let w = { x: points[2], y:points[3] }
-        distanceToMouse = distToSegment(mousePos, v, w);
-      } else {
-        nodePos = node.position();
-        distanceToMouse = Math.hypot(mousePos.x-nodePos.x, mousePos.y-nodePos.y);
-      }
-  
-      if (distanceToMouse < smallestDistance) {
-        smallestDistance = distanceToMouse;
-        return true;
-      }
-      return false;
-    }
-  });
-  if (combs.length > 0) {
-    return combs[combs.length - 1];
+  let diff = pointMinus(mousePos, combOrigin00);
+  let multiY = Math.floor(diff.y / combDistance.y);
+  let multiX = 0;
+  let deltaX = 0;
+  if (multiY % 2 == 0) {
+    multiX = Math.floor(diff.x / combDistance.x);
+    deltaX = 0;
+  } else {
+    multiX = Math.floor((diff.x + combDiffX) / combDistance.x);
+    deltaX = -combDiffX;
   }
-  return null;
+  //console.log('getNearestCombToMouse-multi', multiX, multiY);
+  if (multiX > konvaState.boardWidth || multiY > konvaState.boardHeight) {
+    return null;
+  }
+  combRect = {x: multiX * combDistance.x + deltaX + combOrigin00.x, 
+    y: multiY * combDistance.y + combOrigin00.y,
+    width: hitRect.width, height: hitRect.height };
+  if (rectContainsPoint(combRect, mousePos) !== true) {
+    //console.log('getNearestCombToMouse-contains-point', combRect, mousePos);
+    return null;
+  }
+
+  return rectMiddle(combRect);
 }
 
 function cancelDraw(layer) {
@@ -84,62 +114,8 @@ function cancelDraw(layer) {
   konvaState.drawStartComb = null;
 }
 
-function onLayerMouseClick(layer, event) {
-  //console.log('onLayerMouseClick', event);
-  if (event.evt.ctrlKey) {
-    tryDeleteDrawLine(layer);
-    return;
-  }
-  if (event.evt.button !== 0) {
-    cancelDraw(layer);
-    return;
-  }
-
-  let comb = findComb(layer);
-  if (comb) {
-    if (konvaState.drawStartComb) {
-      drawLine(layer, konvaState.drawStartComb, comb, 'orange');
-    }
-    konvaState.drawStartComb = comb;
-  }
-}
-
-function tryDeleteDrawLine(layer) {
-  console.log('tryDeleteDrawLine');
-  let drawLine = findDrawLine(layer);
-  if (drawLine) {
-    drawLine.destroy();
-    layer.draw();
-  }
-}
-
-function onLayerRightMouseClick(layer, event) {
-  event.evt.preventDefault();
-  cancelDraw(layer);
-}
-
-function onLayerMouseOver(layer, event) {
-  if (konvaState.drawStartComb === null) {
-    return;
-  }
-
-  let comb = findComb(layer);
-  if (comb) {
-    let isStartComb = comb.attrs.x === konvaState.drawStartComb.attrs.x && 
-      comb.attrs.y === konvaState.drawStartComb.attrs.y;
-    if (!isStartComb) {
-      if (konvaState.drawMouseOverLine !== null) {
-        konvaState.drawMouseOverLine.destroy();
-      }
-    
-      let line = drawLine(layer, konvaState.drawStartComb, comb, null);
-      konvaState.drawMouseOverLine = line;
-    }
-  }
-}
-
 function drawLine(layer, startComb, comb, color) {
-  let linePoints = [startComb.attrs.x, startComb.attrs.y, comb.attrs.x, comb.attrs.y];
+  let linePoints = [startComb.x, startComb.y, comb.x, comb.y];
   let name = color ? `${NAME_START_DRAWLINE}-${color}` : NAME_START_MOUSEOVER_LINE;
   let col = color ? color : 'gray';
   line = new Konva.Line({
@@ -148,9 +124,20 @@ function drawLine(layer, startComb, comb, color) {
     name: name,
     points: linePoints,
     stroke: col,
-    strokeWidth: 3
+    strokeWidth: 3,
   });
+  if (color) {
+    line.on('click', (event) => {
+      console.log('drawLine-click', event.evt);
+      let l2 = event.target;
+      if (event.evt.ctrlKey) {
+        l2.destroy();
+        layer.draw();
+      }
+    });  
+  }
   layer.add(line);
   layer.draw();
   return line;
 }
+

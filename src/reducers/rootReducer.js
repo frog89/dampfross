@@ -6,10 +6,10 @@
 const initialState = {
   gameStatus: {
     dices: {
-      redA: null,
-      whiteA: null,
-      redB: null,
-      whiteB: null  
+      redA: 0,
+      whiteA: 0,
+      redB: 0,
+      whiteB: 0  
     },
     scoreTable: {
       isVisible: true,

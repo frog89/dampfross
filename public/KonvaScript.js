@@ -16,6 +16,8 @@ const combDiffY = COMB_RADIUS * 0.5;
 const PADDING = 800;
 
 let konvaState = {
+  boardWidth: 0,
+  boardHeight: 0,
   stage: null,
   drawMouseOverLine: null,
   drawStartComb: null,
@@ -277,28 +279,38 @@ function initStage(width, height) {
 function drawElements(board, users) {  
   ({ width, height, combs, borders, rivers, townTexts, textObjects } = board);
   konvaState.users = users;
+  konvaState.boardWidth = width;
+  konvaState.boardHeight = height;
   //console.log('combs', combs);
   //console.log('borders', borders);
   //console.log('rivers', rivers);
   let scrollContainer = document.getElementById('scroll-container');
   let mapLayer = null;
+  let drawLayer = null;
   let puppetLayer = null;
+  let dragLayer = null;
   if (konvaState.stage) {
     let layers = konvaState.stage.getLayers();
     mapLayer = layers[0];
-    puppetLayer = layers[1];
-    dragLayer = layers[2];
+    drawLayer = layers[1];
+    puppetLayer = layers[2];
+    dragLayer = layers[3];
   } else {
     initStage(width, height);
     mapLayer = new Konva.Layer();
+    drawLayer = new Konva.Layer();
     puppetLayer = new Konva.Layer();
     dragLayer = new Konva.Layer();
-    mapLayer.on('click', event => onLayerMouseClick(mapLayer, event));
-    mapLayer.on('contextmenu', event => onLayerRightMouseClick(mapLayer, event));
-    mapLayer.on('mouseover', event => onLayerMouseOver(mapLayer, event));  
+
     konvaState.stage.add(mapLayer);
+    konvaState.stage.add(drawLayer);
     konvaState.stage.add(puppetLayer);
     konvaState.stage.add(dragLayer);
+
+    mapLayer.on('click', event => onLayerMouseClick(drawLayer, event));
+    mapLayer.on('contextmenu', event => onLayerRightMouseClick(drawLayer, event));
+    mapLayer.on('mousemove', event => onLayerMouseMove(drawLayer, event));  
+
     initPuppets(puppetLayer, dragLayer);
   }
 
@@ -337,6 +349,7 @@ function drawElements(board, users) {
   }
   
   mapLayer.draw();
+  drawLayer.draw();
   puppetLayer.draw();
   dragLayer.draw();
 
