@@ -21,7 +21,10 @@ let konvaState = {
   stage: null,
   drawMouseOverLine: null,
   drawStartComb: null,
-  users: null
+  users: null,
+  setPuppets: null,
+  addDrawLine: null,
+  removeDrawLine: null,
 }
 
 function getCombTypeName(comb) {
@@ -276,11 +279,16 @@ function initStage(width, height) {
   konvaState.stage = stage;
 }
 
-function drawElements(board, users) {  
+function drawElements(board, users, setPuppets, 
+    addDrawLine, removeDrawLine) {  
   ({ width, height, combs, borders, rivers, townTexts, textObjects } = board);
   konvaState.users = users;
   konvaState.boardWidth = width;
   konvaState.boardHeight = height;
+  konvaState.setPuppets = setPuppets;
+  konvaState.addDrawLine = addDrawLine;
+  konvaState.removeDrawLine = removeDrawLine;
+
   //console.log('combs', combs);
   //console.log('borders', borders);
   //console.log('rivers', rivers);

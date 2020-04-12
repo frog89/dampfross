@@ -18,6 +18,8 @@ const initialState = {
         { field: "no", headerName: "No.", resizable: false, editable: false, width: 120 }
       ]  
     },
+    puppets: [],
+    drawLines: [],
   },
   users: [
     { id: 'fa', name: 'Frank', penColor: 'orange' },
@@ -55,7 +57,42 @@ const initialState = {
 }
 
 const rootReducer = (state = initialState, action) => {
+  let newDrawLines = null;
   switch(action.type) {
+    case 'SET_PUPPETS':
+      console.log('SET_PUPPETS', action.puppets);
+      return {
+        ...state,
+        gameStatus: {
+          ...state.gameStatus,
+          puppets: action.puppets
+        }
+      }
+
+    case 'ADD_DRAWLINE':
+      newDrawLines = state.gameStatus.drawLines;
+      newDrawLines.push(action.drawLine);
+      console.log('ADD_DRAWLINE', newDrawLines);
+      return {
+        ...state,
+        gameStatus: {
+          ...state.gameStatus,
+          drawLines: newDrawLines
+        }
+      }
+
+    case 'REMOVE_DRAWLINE':
+      newDrawLines = state.gameStatus.drawLines.filter(
+        (line, index, arr) => { return line.id !== action.drawLineId });
+      console.log('REMOVE_DRAWLINE', action.drawLineId, newDrawLines);
+      return {
+        ...state,
+        gameStatus: {
+          ...state.gameStatus,
+          drawLines: newDrawLines
+        }
+      }
+
     case 'SET_DICES':
       console.log('SET_DICES', action);
       return {

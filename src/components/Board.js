@@ -4,8 +4,27 @@ import { connect } from 'react-redux';
 import './Board.css';
 
 class Board extends React.Component {
+  setPuppets = (puppets) => {
+    //console.log('puppets', puppets);
+    this.props.setPuppetsAction(puppets);
+  }
+
+  addDrawLine = (drawLine) => {
+    //console.log('addDrawLine', drawLine);
+    this.props.addDrawLineAction(drawLine);
+  }
+
+  removeDrawLine = (drawLineId) => {
+    //console.log('removeDrawLine', drawLineId);
+    this.props.removeDrawLineAction(drawLineId);
+  }
+
   componentDidMount() {
-    window.drawElements(this.props.board, this.props.users);
+    window.drawElements(this.props.board, 
+      this.props.users, 
+      this.setPuppets,
+      this.addDrawLine,
+      this.removeDrawLine);
   }
 
   render() {
@@ -29,6 +48,26 @@ class Board extends React.Component {
   }
 }
 
+const setPuppetsAction = (puppets) => {
+  return {
+    type: 'SET_PUPPETS',
+    puppets
+  }
+} 
+
+const addDrawLineAction = (drawLine) => {
+  return {
+    type: 'ADD_DRAWLINE',
+    drawLine
+  }
+} 
+
+const removeDrawLineAction = (drawLineId) => {
+  return {
+    type: 'REMOVE_DRAWLINE',
+    drawLineId
+  }
+} 
 
 const mapStateToProps = (state) => {
   return {
@@ -37,12 +76,12 @@ const mapStateToProps = (state) => {
   }
 }
 
-// const mapDispatchToProps = (dispatch) => {
-//   return {
-//     deleteCard: (id) => { dispatch(deleteCard(id)) },
-//     fetchUsers: () => { dispatch(fetchUsers()) }
-//   }
-// }
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setPuppetsAction: (puppets) => { dispatch(setPuppetsAction(puppets)) },
+    addDrawLineAction: (drawLine) => { dispatch(addDrawLineAction(drawLine)) },
+    removeDrawLineAction: (drawLineId) => { dispatch(removeDrawLineAction(drawLineId)) }
+  }
+}
 
-export default connect(mapStateToProps)(Board);
-//export default Board;
+export default connect(mapStateToProps, mapDispatchToProps)(Board);

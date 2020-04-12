@@ -34,7 +34,6 @@ function initPuppets(puppetLayer, dragLayer) {
     });
     puppetLayer.add(puppetShape);
   }
-  storePuppets(puppetLayer);
   initDragDrop(puppetLayer, dragLayer);
 }
 
@@ -82,7 +81,7 @@ function storePuppets(puppetLayer) {
     let puppet = puppetShapes[i];
     puppets.push({ x: puppet.attrs.x, y: puppet.attrs.y, name: puppet.attrs.name });
   }
-  konvaState.setPuppets(puppets);
+  konvaState.setPuppetsCallback(puppets);
 }
 
 

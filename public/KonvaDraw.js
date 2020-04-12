@@ -14,7 +14,9 @@ function onLayerMouseClick(layer, event) {
   //console.log('onLayerMouseClick-comb', comb);
   if (comb) {
     if (konvaState.drawStartComb) {
-      drawLine(layer, konvaState.drawStartComb, comb, 'orange');
+      let lineShape = drawLine(layer, konvaState.drawStartComb, comb, 'orange');
+      console.log('lineShape', lineShape);
+      konvaState.addDrawLine({id: lineShape._id, points: lineShape.attrs.points});
     }
     konvaState.drawStartComb = comb;
   }
@@ -128,10 +130,11 @@ function drawLine(layer, startComb, comb, color) {
   });
   if (color) {
     line.on('click', (event) => {
-      console.log('drawLine-click', event.evt);
-      let l2 = event.target;
+      //console.log('drawLine-click', event.evt);
+      let lineShape = event.target;
       if (event.evt.ctrlKey) {
-        l2.destroy();
+        konvaState.removeDrawLine(lineShape._id);
+        lineShape.destroy();
         layer.draw();
       }
     });  
