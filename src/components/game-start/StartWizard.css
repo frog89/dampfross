@@ -1,0 +1,14 @@
+.image {
+  position: relative;
+  top: 10px;
+  /* width: 800px; */
+  /* object-fit: cover; */
+  height: 800px;
+}
+
+.wizard {
+  position: relative;
+  top: -600px;
+}
+
+

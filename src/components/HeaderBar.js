@@ -5,7 +5,7 @@ import Menu from './Menu';
 import Expand from '../images/expand.png';
 import Collapse from '../images/collapse.png';
 import { connect } from 'react-redux';
-import './NavBar.css';
+import './HeaderBar.css';
 
 class HeaderBar extends React.Component {
   collapse = () => {
@@ -22,7 +22,9 @@ class HeaderBar extends React.Component {
       <div className="container-fluid bg-dark text-light">
         <div className="row pt-1 pb-1">
           <div className="col-sm-8 col-md-8 col-lg-9 col-xl-10 align-self-center">
-            <span className="border border-primary rounded-pill dampfross-border-width align-middle p-1 mr-2">
+            <span 
+                className="border border-primary rounded-pill dampfross-border-width align-middle p-1 mr-2"
+              >
               <b className="p-3">Dampfross</b>
             </span>
             <Dices/>

@@ -21,7 +21,7 @@ let konvaState = {
   stage: null,
   drawMouseOverLine: null,
   drawStartComb: null,
-  users: null,
+  players: null,
   setPuppets: null,
   addDrawLine: null,
   removeDrawLine: null,
@@ -279,10 +279,10 @@ function initStage(width, height) {
   konvaState.stage = stage;
 }
 
-function drawElements(board, users, setPuppets, 
+function drawElements(board, players, setPuppets, 
     addDrawLine, removeDrawLine) {  
   ({ width, height, combs, borders, rivers, townTexts, textObjects } = board);
-  konvaState.users = users;
+  konvaState.players = players;
   konvaState.boardWidth = width;
   konvaState.boardHeight = height;
   konvaState.setPuppets = setPuppets;

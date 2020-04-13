@@ -10,16 +10,16 @@ function resetPuppets(puppetLayer, dragLayer) {
 }
 
 function initPuppets(puppetLayer, dragLayer) {
-  for (let i=0; i<konvaState.users.length; i++) {
-    let u = konvaState.users[i];
+  for (let i=0; i<konvaState.players.length; i++) {
+    let p = konvaState.players[i];
     let x = PUPPET_OFFSET.x + i * PUPPET_DELTA.x;
     let y = PUPPET_OFFSET.y + i * PUPPET_DELTA.y;
     let puppetShape = new Konva.Circle({
       x: x,
       y: y,
-      name: u.id,
+      name: p.id,
       radius: COMB_RADIUS * 0.5,
-      fill: u.penColor,
+      fill: p.penColor,
       stroke: 'black',
       strokeWidth: 2,
       draggable: true,

@@ -8,18 +8,18 @@ class ScoreTable extends React.Component {
   gridOptions = {};
 
   componentDidMount() {
-    let userColumns = this.props.users.map((user, k) => {
+    let userColumns = this.props.players.map((player, k) => {
       return ({
         valueGetter: function(params) {
-          return params.data[user.id];
+          return params.data[player.id];
          },
         valueSetter: function(params) {
           let newValue = parseInt(params.newValue);
           newValue = isNaN(newValue) ? params.oldValue : newValue;
-          params.data[user.id] = newValue;
+          params.data[player.id] = newValue;
           return true;
         },
-        headerName: user.name,
+        headerName: player.name,
         resizable: true, 
         editable: true
       });
@@ -110,7 +110,7 @@ const setScoreTableColumns = (columns) => {
 
 const mapStateToProps = (state) => {
   return {
-    users: state.users,
+    players: state.gameStatus.players,
     isScoreTableVisible: state.gameStatus.scoreTable.isVisible,
     rows: state.gameStatus.scoreTable.rows,
     columns: state.gameStatus.scoreTable.columns

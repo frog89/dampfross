@@ -25,7 +25,7 @@ class App extends React.Component {
     return (
       <Provider store={store}>
         <div className="container-fluid h-100" style={{ background: 'lightgrey' }}>
-          <div className="row h-100">
+          <div className="row">
             <div className="col">
               <HeaderBar />
             </div>

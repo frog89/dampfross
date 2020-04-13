@@ -20,8 +20,9 @@ class Board extends React.Component {
   }
 
   componentDidMount() {
-    window.drawElements(this.props.board, 
-      this.props.users, 
+    window.drawElements(
+      this.props.board, 
+      this.props.players, 
       this.setPuppets,
       this.addDrawLine,
       this.removeDrawLine);
@@ -72,7 +73,7 @@ const removeDrawLineAction = (drawLineId) => {
 const mapStateToProps = (state) => {
   return {
     board: state.board,
-    users: state.users,
+    players: state.gameStatus.players,
   }
 }
 
