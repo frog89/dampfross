@@ -72,8 +72,9 @@ const removeDrawLineAction = (drawLineId) => {
 
 const mapStateToProps = (state) => {
   return {
+    game: state.game,
     board: state.board,
-    players: state.gameStatus.players,
+    players: state.game.players,
   }
 }
 

@@ -10,11 +10,18 @@ const initialState = {
     isGameStarting: true,
     startWizardPage: 1,
     attendOption: Constants.START_OPTION_ATTEND_GAME,
-    gameName: null,
-    playerName: null,
-    penColor: null,
+    penColors: [
+      { colorValue: 'blue', colorName: 'Blue' },
+      { colorValue: 'crimson', colorName: 'Red'},
+      { colorValue: 'purple', colorName: 'Purple' },
+      { colorValue: 'darkorange', colorName: 'Orange' },
+      { colorValue: 'darkgreen', colorName: 'Green' },
+      { colorValue: 'gold', colorName: 'Yellow' },
+      { colorValue: 'saddlebrown', colorName: 'Brown' },
+      { colorValue: 'DarkSlateGray', colorName: 'Gray' },
+    ],
   },
-  gameStatus: {
+  game: {
     players: [
       { id: 'fa', name: 'Frank', penColor: 'orange' },
       { id: 'ow', name: 'Othmar', penColor: 'pink' },
@@ -39,6 +46,9 @@ const initialState = {
     drawLines: [],
   },
   board: {
+    name: "oestereich",
+    width: 32,
+    height: 28,
     combs: {
       data: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 15, 15, 1, 15, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 15, 1, 15, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 15, 15, 1, 1, 1, 1, 15, 15, 1, 1, 15, 15, 15, 15, 1, 15, 1, 15, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 15, 15, 15, 1, 1, 15, 15, 15, 15, 1, 1, 1, 1, 1, 1, 1, 15, 1, 15, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 15, 15, 15, 15, 1, 15, 15, 15, 7, 15, 15, 15, 15, 1, 1, 1, 1, 15, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 15, 15, 15, 15, 15, 15, 15, 1, 15, 1, 7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 15, 1, 1, 15, 15, 1, 15, 15, 15, 1, 1, 1, 15, 1, 1, 1, 7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 15, 15, 1, 1, 1, 1, 7, 1, 1, 1, 1, 1, 7, 1, 1, 1, 1, 15, 15, 15, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 15, 1, 1, 15, 1, 7, 1, 1, 1, 15, 1, 1, 1, 1, 15, 15, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 7, 1, 1, 1, 1, 7, 1, 15, 1, 1, 1, 1, 1, 1, 15, 1, 15, 15, 1, 1, 1, 1, 14, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 15, 15, 1, 1, 1, 1, 1, 15, 1, 1, 15, 15, 15, 15, 15, 15, 1, 7, 1, 1, 1, 14, 1, 1, 1, 1, 1, 1, 1, 1, 15, 15, 15, 15, 1, 1, 1, 1, 15, 1, 7, 15, 1, 1, 15, 1, 15, 15, 1, 1, 15, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 15, 15, 1, 1, 1, 1, 1, 1, 1, 15, 15, 1, 15, 15, 15, 1, 15, 15, 1, 1, 1, 15, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 15, 1, 14, 15, 15, 1, 14, 15, 1, 15, 15, 1, 1, 1, 1, 15, 15, 15, 15, 15, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 14, 1, 7, 1, 1, 14, 1, 15, 15, 15, 15, 15, 15, 1, 15, 15, 15, 1, 15, 1, 15, 15, 1, 1, 1, 1, 1, 1, 1, 1, 1, 15, 1, 1, 1, 1, 15, 1, 1, 7, 15, 15, 15, 1, 1, 1, 7, 15, 15, 15, 1, 1, 15, 15, 1, 1, 1, 1, 1, 1, 1, 1, 15, 1, 1, 1, 15, 1, 15, 15, 15, 1, 1, 1, 7, 1, 15, 15, 15, 1, 15, 15, 1, 15, 15, 1, 15, 1, 1, 1, 1, 1, 15, 15, 1, 15, 15, 15, 1, 15, 1, 1, 1, 15, 15, 15, 1, 15, 1, 1, 1, 1, 7, 1, 1, 15, 15, 7, 1, 1, 1, 1, 15, 1, 15, 15, 1, 7, 1, 1, 15, 15, 1, 15, 15, 1, 1, 1, 15, 15, 15, 15, 15, 1, 15, 1, 15, 15, 15, 1, 15, 15, 1, 1, 15, 15, 15, 1, 1, 15, 15, 15, 1, 15, 15, 7, 1, 1, 15, 15, 15, 15, 15, 15, 15, 1, 15, 15, 1, 15, 1, 1, 1, 1, 1, 1, 15, 15, 7, 15, 1, 15, 1, 1, 7, 1, 1, 15, 15, 15, 15, 15, 1, 1, 1, 1, 1, 15, 15, 15, 7, 1, 1, 1, 1, 1, 1, 1, 1, 7, 1, 15, 15, 15, 15, 15, 15, 15, 15, 1, 15, 15, 15, 7, 1, 15, 1, 15, 15, 15, 15, 15, 1, 1, 1, 7, 1, 1, 1, 1, 15, 1, 15, 15, 15, 15, 15, 15, 15, 1, 15, 7, 15, 15, 15, 15, 15, 15, 15, 15, 15, 7, 15, 1, 1, 1, 15, 15, 15, 1, 1, 1, 15, 15, 1, 15, 15, 15, 15, 1, 1, 15, 1, 15, 15, 15, 1, 15, 15, 1, 1, 1, 15, 1, 1, 15, 15, 15, 1, 1, 1, 1, 1, 1, 15, 1, 15, 15, 15, 15, 15, 15, 1, 1, 15, 15, 1, 1, 1, 1, 1, 14, 7, 1, 1, 15, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 15, 1, 15, 15, 1, 1, 1, 1, 1, 15, 1, 7, 1, 15, 15, 1, 7, 1, 1, 1, 15, 1, 1, 1, 15, 1, 1, 1, 1, 1, 1, 1, 15, 1, 1, 1, 15, 15, 1, 15, 15, 15, 15, 15, 15, 15, 1, 1, 1, 15, 15, 15, 15, 15, 1, 15, 1, 1, 1, 1, 1, 1, 1, 1, 15, 15, 15, 1, 15, 15, 15, 1, 15, 1, 15, 1, 15, 1, 1, 15, 15, 1, 15, 15, 15, 15, 1, 15, 1, 1, 1, 1, 1, 1, 1, 1],
       offset: 0
@@ -61,14 +71,24 @@ const initialState = {
       inside: ['62',      '61',    '11\n-14', '63',    '15',        '65\n66', '56',      '55',   '16',               '64',    '51\n52',   '53',         '25',      '54',     '24',     '23',       '44',        '46',            '43',   '45',    '21\n22', '41\n42',    '33',          '26',       '31',          '35',        '34',         '32',           '36'],
       outside: ['ZWETTL', 'KREMS', 'WIEN',    'GREIN', 'ST.POLTEN', 'LINZ',   'BRAUNAU', 'WELS', 'WIENER\nNEUSTADT', 'WEYER', 'SALZBURG', 'BAD\nISCHL', 'HIEFLAU', 'LIEZEN', 'LEOBEN', 'HARTBERG', 'KITZBUHEL', 'BISCHOFSHOFEN', 'HALL', 'BRUCK', 'GRAZ',   'INNSBRUCK', 'MAUTERNDORF', 'FELDBACH', 'BAD GASTEIN', 'WOLFSBERG', 'KLAGENFURT', 'OBERDRASBURG', 'VILLACH']
     },
-    height: 28,
-    width: 32
   }
 }
 
 const rootReducer = (state = initialState, action) => {
   let newDrawLines = null;
   switch(action.type) {
+    case 'SET_GAME':
+      console.log('SET_GAME', action.game.name, action.board.name);
+      return {
+        ...state,
+        attendStatus: {
+          ...state.attendStatus,
+          isGameStarting: false,          
+        },
+        game: action.game,
+        board: action.board
+      }
+      
     case 'SET_START_WIZARD_PAGE':
       console.log('SET_START_WIZARD_PAGE', action.page);
       return {
@@ -93,32 +113,32 @@ const rootReducer = (state = initialState, action) => {
       console.log('SET_PUPPETS', action.puppets);
       return {
         ...state,
-        gameStatus: {
-          ...state.gameStatus,
+        game: {
+          ...state.game,
           puppets: action.puppets
         }
       }
 
     case 'ADD_DRAWLINE':
-      newDrawLines = state.gameStatus.drawLines;
+      newDrawLines = state.game.drawLines;
       newDrawLines.push(action.drawLine);
       console.log('ADD_DRAWLINE', newDrawLines);
       return {
         ...state,
-        gameStatus: {
-          ...state.gameStatus,
+        game: {
+          ...state.game,
           drawLines: newDrawLines
         }
       }
 
     case 'REMOVE_DRAWLINE':
-      newDrawLines = state.gameStatus.drawLines.filter(
+      newDrawLines = state.game.drawLines.filter(
         (line, index, arr) => { return line.id !== action.drawLineId });
       console.log('REMOVE_DRAWLINE', action.drawLineId, newDrawLines);
       return {
         ...state,
-        gameStatus: {
-          ...state.gameStatus,
+        game: {
+          ...state.game,
           drawLines: newDrawLines
         }
       }
@@ -127,8 +147,8 @@ const rootReducer = (state = initialState, action) => {
       console.log('SET_DICES', action);
       return {
         ...state,
-        gameStatus: {
-          ...state.gameStatus,
+        game: {
+          ...state.game,
           dices: {
             redA: action.redA,
             whiteA: action.whiteA,
@@ -141,10 +161,10 @@ const rootReducer = (state = initialState, action) => {
     case 'SET_SCORETABLE_VISIBILITY':
       return {
         ...state,
-        gameStatus: {
-          ...state.gameStatus,
+        game: {
+          ...state.game,
           scoreTable: {
-            ...state.gameStatus.scoreTable,
+            ...state.game.scoreTable,
             isVisible: action.isVisible
           }
         }
@@ -153,10 +173,10 @@ const rootReducer = (state = initialState, action) => {
     case 'SET_SCORETABLE_ROWS':
       let newState = {
         ...state,
-        gameStatus: {
-          ...state.gameStatus,
+        game: {
+          ...state.game,
           scoreTable: {
-            ...state.gameStatus.scoreTable,
+            ...state.game.scoreTable,
             rows: action.rows
           }
         }
@@ -167,10 +187,10 @@ const rootReducer = (state = initialState, action) => {
     case 'SET_SCORETABLE_COLUMNS':
       return {
         ...state,
-        gameStatus: {
-          ...state.gameStatus,
+        game: {
+          ...state.game,
           scoreTable: {
-            ...state.gameStatus.scoreTable,
+            ...state.game.scoreTable,
             columns: action.columns
           }
         }

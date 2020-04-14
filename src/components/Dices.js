@@ -122,7 +122,7 @@ const setDices = (redA, whiteA, redB, whiteB) => {
 
 const mapStateToProps = (state) => {
   return {
-    dices: state.gameStatus.dices
+    dices: state.game.dices
   }
 }
 

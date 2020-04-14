@@ -39,7 +39,7 @@ class App extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    isScoreTableVisible: state.gameStatus.scoreTable.isVisible
+    isScoreTableVisible: state.game.scoreTable.isVisible
   }
 }
 

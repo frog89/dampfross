@@ -6,7 +6,6 @@ import StartHeaderBar from './StartHeaderBar';
 import WizardAttend from './WizardAttendOption';
 import WizardNewGame from './WizardNewGame';
 import WizardAttendGame from './WizardAttendGame';
-import WizardWaiting from './WizardWaiting';
 
 import StartBackgroundPic from '../../images/start-background.jpg';
 import store from '../../store';
@@ -24,8 +23,6 @@ class StartWizard extends React.Component {
       } else {
         wizardPage = <WizardAttendGame/>;
       }
-    } else if (this.props.startWizardPage === 3) {
-      wizardPage = <WizardWaiting/>;
     }
     return (
       <Provider store={store}>
@@ -57,5 +54,11 @@ const mapStateToProps = (state) => {
     attendOption: state.attendStatus.attendOption,
   }
 }
+
+// const mapDispatchToProps = (dispatch) => {
+//   return {
+//     setGameStarting: (value) => { dispatch(setGameStarting(value)) },
+//   }
+// }
 
 export default connect(mapStateToProps)(StartWizard);

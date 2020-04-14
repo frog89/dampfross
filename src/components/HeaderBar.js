@@ -56,7 +56,7 @@ const setScoreTableVisibility = (isVisible) => {
 
 const mapStateToProps = (state) => {
   return {
-    isScoreTableVisible: state.gameStatus.scoreTable.isVisible
+    isScoreTableVisible: state.game.scoreTable.isVisible
   }
 }
 
