@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Provider } from 'react-redux';
 
 import StartHeaderBar from './StartHeaderBar';
-import WizardAttend from './WizardAttendOption';
+import WizardStartOption from './WizardStartOption';
 import WizardNewGame from './WizardNewGame';
 import WizardAttendGame from './WizardAttendGame';
 
@@ -16,7 +16,7 @@ class StartWizard extends React.Component {
   render() {
     let wizardPage = null;
     if (this.props.startWizardPage === 1) {
-      wizardPage = <WizardAttend/>;
+      wizardPage = <WizardStartOption/>;
     } else if (this.props.startWizardPage === 2) {
       if (this.props.attendOption === Constants.START_OPTION_NEW_GAME ) {
         wizardPage = <WizardNewGame/>;

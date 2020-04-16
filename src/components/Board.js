@@ -1,12 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { setKonvaRedraw } from '../actions/konvaActions';
 
 import './Board.css';
 
 class Board extends React.Component {
-  setPuppets = (puppets) => {
-    //console.log('puppets', puppets);
-    this.props.setPuppetsAction(puppets);
+  setPuppet = (puppetCfg) => {
+    this.props.setPuppetAction(puppetCfg);
   }
 
   addDrawLine = (drawLine) => {
@@ -20,10 +20,23 @@ class Board extends React.Component {
   }
 
   componentDidMount() {
+    this.redrawBoard();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.props.attendStatus.isKonvaRedrawNeeded) {
+      console.log('konva redraw');
+      this.redrawBoard();
+      setKonvaRedraw(false);
+    }
+  }
+
+  redrawBoard() {
     window.drawElements(
+      this.props.attendStatus, 
       this.props.board, 
-      this.props.players, 
-      this.setPuppets,
+      this.props.game, 
+      this.setPuppet,
       this.addDrawLine,
       this.removeDrawLine);
   }
@@ -31,7 +44,7 @@ class Board extends React.Component {
   render() {
     let largeContiWidth = window.innerWidth; //window.getCombRadius() * 2 * this.props.board.width;
     let largeContiHeight = window.innerHeight; //window.getCombRadius() * 2 * this.props.board.height;
-    console.log('large-container-size', largeContiWidth, largeContiHeight);
+    //console.log('large-container-size', largeContiWidth, largeContiHeight);
 
     return (
       <div id="scroll-container">
@@ -49,10 +62,10 @@ class Board extends React.Component {
   }
 }
 
-const setPuppetsAction = (puppets) => {
+const setPuppetAction = (puppetCfg) => {
   return {
-    type: 'SET_PUPPETS',
-    puppets
+    type: 'SET_PUPPET',
+    puppetCfg
   }
 } 
 
@@ -72,15 +85,15 @@ const removeDrawLineAction = (drawLineId) => {
 
 const mapStateToProps = (state) => {
   return {
+    attendStatus: state.attendStatus,
     game: state.game,
     board: state.board,
-    players: state.game.players,
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setPuppetsAction: (puppets) => { dispatch(setPuppetsAction(puppets)) },
+    setPuppetAction: (puppet) => { dispatch(setPuppetAction(puppet)) },
     addDrawLineAction: (drawLine) => { dispatch(addDrawLineAction(drawLine)) },
     removeDrawLineAction: (drawLineId) => { dispatch(removeDrawLineAction(drawLineId)) }
   }

@@ -1,6 +1,6 @@
 const NAME_START_COMB = "comb";
 const NAME_START_DRAWLINE = "line-draw";
-const NAME_START_MOUSEOVER_LINE = "line-mouseover";
+const NAME_TEMPLINE = "line-temp";
 
 function onLayerMouseClick(layer, event) {
   //console.log('onLayerMouseClick', event);
@@ -14,9 +14,11 @@ function onLayerMouseClick(layer, event) {
   //console.log('onLayerMouseClick-comb', comb);
   if (comb) {
     if (konvaState.drawStartComb) {
-      let lineShape = drawLine(layer, konvaState.drawStartComb, comb, 'orange');
-      console.log('lineShape', lineShape);
-      konvaState.addDrawLine({id: lineShape._id, points: lineShape.attrs.points});
+      let player = konvaState.attendStatus.player;
+      let line = drawLineForCombs(layer, player, konvaState.drawStartComb, comb);
+      let playerId = player._id.toString();
+      console.log('onLayerMouseClick-drawLine:', line, playerId);
+      konvaState.addDrawLine({id: line._id, points: line.attrs.points, playerId: playerId });
     }
     konvaState.drawStartComb = comb;
   }
@@ -37,7 +39,7 @@ function onLayerMouseMove(layer, event) {
         konvaState.drawMouseOverLine.destroy();
       }
     
-      let line = drawLine(layer, konvaState.drawStartComb, comb, null);
+      let line = drawTempLine(layer, konvaState.drawStartComb, comb);
       konvaState.drawMouseOverLine = line;
     }
   }
@@ -116,31 +118,57 @@ function cancelDraw(layer) {
   konvaState.drawStartComb = null;
 }
 
-function drawLine(layer, startComb, comb, color) {
+function drawTempLine(layer, startComb, comb) {
   let linePoints = [startComb.x, startComb.y, comb.x, comb.y];
-  let name = color ? `${NAME_START_DRAWLINE}-${color}` : NAME_START_MOUSEOVER_LINE;
-  let col = color ? color : 'gray';
+  let name = NAME_TEMPLINE;
   line = new Konva.Line({
     x: 0,
     y: 0,
     name: name,
     points: linePoints,
-    stroke: col,
+    stroke: 'gray',
     strokeWidth: 3,
   });
-  if (color) {
-    line.on('click', (event) => {
-      //console.log('drawLine-click', event.evt);
-      let lineShape = event.target;
-      if (event.evt.ctrlKey) {
-        konvaState.removeDrawLine(lineShape._id);
-        lineShape.destroy();
-        layer.draw();
-      }
-    });  
-  }
   layer.add(line);
   layer.draw();
   return line;
 }
 
+function drawLineForCombs(layer, player, startComb, comb) {
+  let linePoints = [startComb.x, startComb.y, comb.x, comb.y];
+  console.log('drawLine-linePoints:', linePoints);
+  return drawLine(layer, player, linePoints);
+}
+
+function drawLine(layer, player, linePoints) {
+  let name = `${NAME_START_DRAWLINE}-${player._id}`;
+  line = new Konva.Line({
+    x: 0,
+    y: 0,
+    name: name,
+    points: linePoints,
+    stroke: player.penColor,
+    strokeWidth: 3,
+  });
+  line.on('click', (event) => {
+    //console.log('drawLine-click', event.evt);
+    let lineShape = event.target;
+    if (event.evt.ctrlKey) {
+      konvaState.removeDrawLine(lineShape._id);
+      lineShape.destroy();
+      layer.draw();
+    }
+  });  
+  layer.add(line);
+  layer.draw();
+  return line;
+}
+
+function drawDrawLines(layer) {
+  for (let i = 0; i<konvaState.game.drawLines.length; i++) {
+    let drawLineCfg = konvaState.game.drawLines[i];
+    let player = konvaState.game.players.find(p => p._id === drawLineCfg.playerId);
+    //console.log('drawDrawLines:', player, drawLineCfg);
+    let line = drawLine(layer, player, drawLineCfg.points);
+  }
+}

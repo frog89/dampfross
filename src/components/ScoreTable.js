@@ -3,40 +3,46 @@ import { connect } from 'react-redux';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
+import { getColumnsForPlayers, getFirstRow } from '../actions/scoreTableActions';
+
+import * as Constants from '../constants';
 
 class ScoreTable extends React.Component {
+  state = {
+    columns: []
+  }
+  
   gridOptions = {};
 
   componentDidMount() {
-    let userColumns = this.props.players.map((player, k) => {
-      return ({
-        valueGetter: function(params) {
-          return params.data[player.id];
-         },
-        valueSetter: function(params) {
-          let newValue = parseInt(params.newValue);
-          newValue = isNaN(newValue) ? params.oldValue : newValue;
-          params.data[player.id] = newValue;
-          return true;
-        },
-        headerName: player.name,
-        resizable: true, 
-        editable: true
-      });
-    });
-    let cols = this.props.columns;
-    if (cols.length <= 1) {
-      cols.push(...userColumns);
-      this.props.setScoreTableColumns(cols);  
+    this.resetColumns();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    this.resetColumns();
+  }
+
+  resetColumns() {
+    if (this.state.columns.length === this.props.players.length + 1) {
+      return;
+    }
+    
+    let cols = getColumnsForPlayers(this.props.players);
+    this.setState({ columns: cols });
+
+    if (this.props.gameStatus === Constants.GAME_STATUS_WAITING_FOR_PLAYERS) {
+      let firstRow = getFirstRow(this.props.players);
+      this.props.setScoreTableRows([firstRow]);
     }
   }
-  
+
   onGridReady = (params) => {
     this.gridOptions.api = params.api;
     this.gridOptions.columnApi = params.columnApi;
 
-    this.gridOptions.api.setColumnDefs(this.props.columns);
+    this.gridOptions.api.setColumnDefs(this.state.columns);
     this.gridOptions.api.sizeColumnsToFit();
+    this.setRows(this.props.rows);
   }
 
   addRow = () => {
@@ -44,7 +50,7 @@ class ScoreTable extends React.Component {
     let rows = this.props.rows;
     let lastRow = rows[rows.length-1];
     rows = [...rows, {...lastRow, no: lastRow.no + 1}];
-    this.props.setScoreTableRows(rows);
+    this.setRows(rows);
   }
 
   delRow = () => {
@@ -54,8 +60,12 @@ class ScoreTable extends React.Component {
       return;
     }
     rows.pop();
-    this.gridOptions.api.setRowData(rows);
+    this.setRows(rows);
+  }
+
+  setRows = (rows) => {
     this.props.setScoreTableRows(rows);
+    this.gridOptions.api.setRowData(rows);
   }
 
   render() {
@@ -83,8 +93,8 @@ class ScoreTable extends React.Component {
           <div className="col-12 ag-theme-balham p-0">
             <AgGridReact
               onGridReady={this.onGridReady}
-              columnDefs={this.props.columns}
               rowData={this.props.rows}
+              columnDefs={this.state.columns}
               >
             </AgGridReact>
           </div>
@@ -101,26 +111,18 @@ const setScoreTableRows = (rows) => {
   }
 } 
 
-const setScoreTableColumns = (columns) => {
-  return {
-    type: 'SET_SCORETABLE_COLUMNS',
-    columns
-  }
-} 
-
 const mapStateToProps = (state) => {
   return {
     players: state.game.players,
     isScoreTableVisible: state.game.scoreTable.isVisible,
     rows: state.game.scoreTable.rows,
-    columns: state.game.scoreTable.columns
+    gameStatus: state.game.status,
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
     setScoreTableRows: rows => { dispatch(setScoreTableRows(rows)) },
-    setScoreTableColumns: columns => { dispatch(setScoreTableColumns(columns)) },
   }
 }
 

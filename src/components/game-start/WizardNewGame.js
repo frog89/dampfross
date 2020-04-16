@@ -1,17 +1,20 @@
 import React from 'react';
 import axios from 'axios';
+import mongoose from 'mongoose';
 import { connect } from 'react-redux';
+import { getFirstRow } from '../../actions/scoreTableActions';
+import * as Constants from '../../constants';
 import './StartWizard.css';
 
 class WizardNewGame extends React.Component {
   state = {
-    playerName: null,
-    gameName: null,
-    gamePassword: null,
-    penColor: null,
-    boardId: null,
+    playerName: '',
+    gameName: '',
+    gamePassword: '',
+    penColor: '',
+    boardId: '',
     boards: [],
-    error: null,
+    error: '',
   }
 
   componentDidMount() {
@@ -22,30 +25,41 @@ class WizardNewGame extends React.Component {
     axios.get('http://localhost:5000/boards')
       .then(( { data } ) => {
         this.setState({ boards: data.boards });
+        this.setState({
+          playerName: "Frank",
+          gameName: "oesi",
+          gamePassword: "xy",
+          penColor: "darkorange",
+          boardId: "5e95793a033c5c0f382b39ea"
+        });
       })
       .catch(err => console.log(err));
   }
   
   createGame = () => {
     console.log('createGame', this.state);
+    let currentPlayer = {
+      _id: mongoose.Types.ObjectId(),
+      name: this.state.playerName,
+      penColor: this.state.penColor
+    };
+    let players = [currentPlayer];
+    let puppetPos = window.getPosForNewPuppet(0);
+    let puppet = { x: puppetPos.x, y: puppetPos.y, playerId: currentPlayer._id }
+    let firstScoreTableRow = getFirstRow(players);
     let game = {
       name: this.state.gameName,
       password: this.state.gamePassword,
-      players: [{
-        name: this.state.playerName,
-        penColor: this.state.penColor
-      }],
+      status: Constants.GAME_STATUS_WAITING_FOR_PLAYERS,
+      players: players,
       dices: {
         redA: 0, whiteA: 0, redB: 0, whiteB: 0,
       },
       scoreTable: { 
         isVisible: true,
-        rows: [{
-          no: 1,
-          scores: [],
-        }],  
+        rows: [firstScoreTableRow],
       },
-      puppets: [],
+      puppets: [puppet],
       drawLines: [],
       board: this.state.boardId,
     };
@@ -53,18 +67,29 @@ class WizardNewGame extends React.Component {
     axios.post('http://localhost:5000/games', game)
       .then((response) => {
         console.log('create-new-success', response.data);
-        this.props.setGame(response.data);
+        this.loadBoard(response.data);
       })
       .catch(err => {
         console.log('create-new-err', err);
         this.setState({error: err.response.data.message});
       });
   }
-  prevButtonClicked = (event) => {
+
+  loadBoard = (game) => {
+    axios.get(`http://localhost:5000/boards/${game.board}`)
+    .then(( response ) => {
+      console.log('loadBoard', game, response.data);
+      this.props.setPlayer(game.players[0]);
+      this.props.setGameAndBoard(game, response.data);
+    })
+    .catch(err => console.log(err));
+  }
+
+  onPrevButtonClicked = (event) => {
     this.props.setStartWizardPage(1);
   }
 
-  nextButtonClicked = (event) => {
+  onNextButtonClicked = (event) => {
     this.createGame();
   }
 
@@ -90,8 +115,8 @@ class WizardNewGame extends React.Component {
 
   render() {
     const boardChooser = 
-      <select className="combobox form-control" name="gameChooser" id="board"
-        onChange={this.onBoardChange}
+      <select className="combobox form-control" name="boardChooser" id="board"
+        onChange={this.onBoardChange} value={this.state.boardId}
       >
         <option value="">Select Board</option> 
         {
@@ -103,7 +128,7 @@ class WizardNewGame extends React.Component {
 
     const penChooser = 
       <select className="combobox form-control" name="colorChooser" id="penColor"
-        onChange={this.onPenColorChange}
+        onChange={this.onPenColorChange} value={this.state.penColor}
       >
         <option value="">Select Color</option>
         {
@@ -134,21 +159,21 @@ class WizardNewGame extends React.Component {
           <div className="form-group text-left">
             <label htmlFor="player">Player Name:</label>
             <input type="text" className="form-control" id="player" placeholder="Enter name..."
-              onChange={this.onPlayerNameChange}
+              onChange={this.onPlayerNameChange} value={this.state.playerName}
             />
           </div>
 
           <div className="form-group text-left">
             <label htmlFor="game">Game Name:</label>
             <input type="text" className="form-control" id="gameName" placeholder="Enter name..."
-              onChange={this.onGameNameChange}
+              onChange={this.onGameNameChange} value={this.state.gameName}
             />
           </div>
 
           <div className="form-group text-left">
             <label htmlFor="game">Game Password:</label>
             <input type="password" className="form-control" id="gamePassword" placeholder="Enter password..."
-              onChange={this.onGamePasswordChange}
+              onChange={this.onGamePasswordChange} value={this.state.gamePassword}
             />
           </div>
 
@@ -172,15 +197,22 @@ class WizardNewGame extends React.Component {
           </div>
         </div>
         <div className="card-footer text-muted">
-          <button className="btn btn-primary" onClick={this.prevButtonClicked}>Prev</button>
+          <button className="btn btn-primary" onClick={this.onPrevButtonClicked}>Prev</button>
           <a href="/#" className={`btn btn-primary ml-2 ${nextButtonDisabledStyle}`}
-            onClick={this.nextButtonClicked}
+            onClick={this.onNextButtonClicked}
           >
             Next
           </a>
         </div>
       </div>
     )
+  }
+}
+
+const setPlayer = (player) => {
+  return {
+    type: 'SET_PLAYER',
+    player: player,
   }
 }
 
@@ -197,18 +229,11 @@ export const fetchUsers = () => {
   }
 }
 
-const setGame = (game) => {
-  return (dispatch) => {
-    axios.get(`http://localhost:5000/boards/${game.board}`)
-      .then(( { data } ) => {
-        console.log('setGame-board', data);
-        dispatch({
-          type: 'SET_GAME',
-          game: game,
-          board: data
-        })
-      })
-      .catch(err => console.log(err));
+const setGameAndBoard = (game, board) => {
+  return {
+    type: 'SET_GAME_AND_BOARD',
+    game: game,
+    board: board
   }
 } 
 
@@ -228,7 +253,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     setStartWizardPage: (page) => { dispatch(setStartWizardPage(page)) },
-    setGame: (game) => { dispatch(setGame(game)) },
+    setGameAndBoard: (game, board) => { dispatch(setGameAndBoard(game, board)) },
+    setPlayer: (player) => { dispatch(setPlayer(player)) },
   }
 }
 

@@ -9,17 +9,23 @@ function resetPuppets(puppetLayer, dragLayer) {
   }
 }
 
-function initPuppets(puppetLayer, dragLayer) {
-  for (let i=0; i<konvaState.players.length; i++) {
-    let p = konvaState.players[i];
-    let x = PUPPET_OFFSET.x + i * PUPPET_DELTA.x;
-    let y = PUPPET_OFFSET.y + i * PUPPET_DELTA.y;
+function getPosForNewPuppet(prevPuppetCount) {
+  let x = PUPPET_OFFSET.x + prevPuppetCount * PUPPET_DELTA.x;
+  let y = PUPPET_OFFSET.y + prevPuppetCount * PUPPET_DELTA.y;
+  return {x, y};
+}
+
+function drawPuppets(puppetLayer, dragLayer) {
+  for (let i=0; i<konvaState.game.puppets.length; i++) {
+    let puppet = konvaState.game.puppets[i];
+    let player = konvaState.game.players.find(p => p._id === puppet.playerId);
+    //console.log('drawPuppets-player:', puppet.playerId, player)
     let puppetShape = new Konva.Circle({
-      x: x,
-      y: y,
-      name: p.id,
+      x: puppet.x,
+      y: puppet.y,
+      name: player._id,
       radius: COMB_RADIUS * 0.5,
-      fill: p.penColor,
+      fill: player.penColor,
       stroke: 'black',
       strokeWidth: 2,
       draggable: true,
@@ -34,7 +40,6 @@ function initPuppets(puppetLayer, dragLayer) {
     });
     puppetLayer.add(puppetShape);
   }
-  storePuppets(puppetLayer);
   initDragDrop(puppetLayer, dragLayer);
 }
 
@@ -61,7 +66,6 @@ function initDragDrop(puppetLayer, dragLayer) {
   konvaState.stage.on("dragend", function(evt) {
     var puppet = evt.target;
     puppet.moveTo(puppetLayer);
-    storePuppets(puppetLayer);
     puppetLayer.draw();
     dragLayer.draw();
     puppet.to({
@@ -72,17 +76,8 @@ function initDragDrop(puppetLayer, dragLayer) {
       shadowOffsetX: 3,
       shadowOffsetY: 3
     });
+    let puppetCfg = {x: puppet.attrs.x, y: puppet.attrs.y, playerId: puppet.attrs.name };
+    console.log('dragend-puppet:', puppetCfg);
+    konvaState.setPuppet(puppetCfg);
   });
 }
-
-function storePuppets(puppetLayer) {
-  let puppets = [];
-  let puppetShapes = puppetLayer.getChildren();
-  for (let i=0; i<puppetShapes.length; i++) {
-    let puppet = puppetShapes[i];
-    puppets.push({ x: puppet.attrs.x, y: puppet.attrs.y, name: puppet.attrs.name });
-  }
-  konvaState.setPuppets(puppets);
-}
-
-

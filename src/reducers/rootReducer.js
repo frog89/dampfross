@@ -7,9 +7,11 @@ import * as Constants from '../constants';
 
 const initialState = {
   attendStatus: {
+    player: null,
     isGameStarting: true,
     startWizardPage: 1,
-    attendOption: Constants.START_OPTION_ATTEND_GAME,
+    attendOption: Constants.START_OPTION_NEW_GAME,
+    isKonvaRedrawNeeded: false,
     penColors: [
       { colorValue: 'blue', colorName: 'Blue' },
       { colorValue: 'crimson', colorName: 'Red'},
@@ -77,8 +79,49 @@ const initialState = {
 const rootReducer = (state = initialState, action) => {
   let newDrawLines = null;
   switch(action.type) {
+    case 'SAVE_GAME':
+      console.log('SAVE_GAME');
+      return state;
+
+    case 'SET_KONVA_REDRAW':
+      console.log('SET_KONVA_REDRAW', action.isRedrawNeeded);
+      return {
+        ...state,
+        attendStatus: {
+          ...state.attendStatus,
+          isKonvaRedrawNeeded: action.isRedrawNeeded,
+        },
+      }
+
+    case 'SET_PLAYER':
+      console.log('SET_PLAYER', action.player);
+      return {
+        ...state,
+        attendStatus: {
+          ...state.attendStatus,
+          player: action.player,
+        },
+      }
+      
     case 'SET_GAME':
-      console.log('SET_GAME', action.game.name, action.board.name);
+      console.log('SET_GAME', action.game.puppets.length);
+      return {
+        ...state,
+        game: action.game
+      }
+
+    case 'SET_GAME_STATUS':
+      console.log('SET_GAME_STATUS', action.status);
+      return {
+        ...state,
+        game: {
+          ...state.game,
+          status: action.status
+        }
+      }
+  
+    case 'SET_GAME_AND_BOARD':
+      console.log('SET_GAME_AND_BOARD', action.game.name, action.board.name);
       return {
         ...state,
         attendStatus: {
@@ -109,22 +152,31 @@ const rootReducer = (state = initialState, action) => {
         }
       }
 
-    case 'SET_PUPPETS':
-      console.log('SET_PUPPETS', action.puppets);
+    case 'SET_PUPPET':
+      console.log('SET_PUPPET', action.puppetCfg);
+      let newPuppets = state.game.puppets.filter((value, index, arr) => {
+        return value.playerId !== action.puppetCfg.playerId;
+      });
+      newPuppets.push(action.puppetCfg);
       return {
         ...state,
         game: {
           ...state.game,
-          puppets: action.puppets
+          puppets: newPuppets
         }
       }
 
     case 'ADD_DRAWLINE':
       newDrawLines = state.game.drawLines;
       newDrawLines.push(action.drawLine);
+      
       console.log('ADD_DRAWLINE', newDrawLines);
       return {
         ...state,
+        attendStatus: {
+          ...state.attendStatus,
+          isKonvaRedrawNeeded: true
+        },
         game: {
           ...state.game,
           drawLines: newDrawLines
@@ -159,6 +211,7 @@ const rootReducer = (state = initialState, action) => {
       }
 
     case 'SET_SCORETABLE_VISIBILITY':
+      console.log('SET_SCORETABLE_VISIBILITY:', action.isVisible)
       return {
         ...state,
         game: {

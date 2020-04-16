@@ -16,15 +16,16 @@ const combDiffY = COMB_RADIUS * 0.5;
 const PADDING = 800;
 
 let konvaState = {
-  boardWidth: 0,
-  boardHeight: 0,
+  attendStatus: null,
+  board: null,
+  game: null,
+  setPuppet: null,
+  addDrawLine: null,
+  removeDrawLine: null,
+
   stage: null,
   drawMouseOverLine: null,
   drawStartComb: null,
-  players: null,
-  setPuppets: null,
-  addDrawLine: null,
-  removeDrawLine: null,
 }
 
 function getCombTypeName(comb) {
@@ -279,13 +280,13 @@ function initStage(width, height) {
   konvaState.stage = stage;
 }
 
-function drawElements(board, players, setPuppets, 
+function drawElements(attendStatus, board, game, setPuppet, 
     addDrawLine, removeDrawLine) {  
   ({ width, height, combs, borders, rivers, townTexts, textObjects } = board);
-  konvaState.players = players;
-  konvaState.boardWidth = width;
-  konvaState.boardHeight = height;
-  konvaState.setPuppets = setPuppets;
+  konvaState.attendStatus = attendStatus;
+  konvaState.game = game;
+  konvaState.board = board;
+  konvaState.setPuppet = setPuppet;
   konvaState.addDrawLine = addDrawLine;
   konvaState.removeDrawLine = removeDrawLine;
 
@@ -300,9 +301,13 @@ function drawElements(board, players, setPuppets,
   if (konvaState.stage) {
     let layers = konvaState.stage.getLayers();
     mapLayer = layers[0];
+    mapLayer.destroyChildren();
     drawLayer = layers[1];
+    drawLayer.destroyChildren();
     puppetLayer = layers[2];
+    puppetLayer.destroyChildren();
     dragLayer = layers[3];
+    dragLayer.destroyChildren();
   } else {
     initStage(width, height);
     mapLayer = new Konva.Layer();
@@ -317,10 +322,10 @@ function drawElements(board, players, setPuppets,
 
     mapLayer.on('click', event => onLayerMouseClick(drawLayer, event));
     mapLayer.on('contextmenu', event => onLayerRightMouseClick(drawLayer, event));
-    mapLayer.on('mousemove', event => onLayerMouseMove(drawLayer, event));  
-
-    initPuppets(puppetLayer, dragLayer);
+    mapLayer.on('mousemove', event => onLayerMouseMove(drawLayer, event));
   }
+  drawPuppets(puppetLayer, dragLayer);
+  drawDrawLines(drawLayer);
 
   let townTextIdx = 0;
   let textIdx = 0;
