@@ -40,7 +40,6 @@ function drawPuppets(puppetLayer, dragLayer) {
     });
     puppetLayer.add(puppetShape);
   }
-  initDragDrop(puppetLayer, dragLayer);
 }
 
 function initDragDrop(puppetLayer, dragLayer) {
@@ -77,7 +76,7 @@ function initDragDrop(puppetLayer, dragLayer) {
       shadowOffsetY: 3
     });
     let puppetCfg = {x: puppet.attrs.x, y: puppet.attrs.y, playerId: puppet.attrs.name };
-    console.log('dragend-puppet:', puppetCfg);
+    //console.log('dragend-puppet:', puppetCfg);
     konvaState.setPuppet(puppetCfg);
   });
 }

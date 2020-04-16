@@ -8,6 +8,7 @@ import * as Constants from '../constants';
 const initialState = {
   attendStatus: {
     player: null,
+    isAutoReload: true,
     isGameStarting: true,
     startWizardPage: 1,
     attendOption: Constants.START_OPTION_NEW_GAME,
@@ -24,6 +25,7 @@ const initialState = {
     ],
   },
   game: {
+    _id: null,
     players: [
       { id: 'fa', name: 'Frank', penColor: 'orange' },
       { id: 'ow', name: 'Othmar', penColor: 'pink' },
@@ -82,6 +84,16 @@ const rootReducer = (state = initialState, action) => {
     case 'SAVE_GAME':
       console.log('SAVE_GAME');
       return state;
+
+    case 'SET_AUTO_RELOAD':
+      console.log('SET_AUTO_RELOAD', action.isAutoReload);
+      return {
+        ...state,
+        attendStatus: {
+          ...state.attendStatus,
+          isAutoReload: action.isAutoReload,
+        },
+      }
 
     case 'SET_KONVA_REDRAW':
       console.log('SET_KONVA_REDRAW', action.isRedrawNeeded);
@@ -167,10 +179,11 @@ const rootReducer = (state = initialState, action) => {
       }
 
     case 'ADD_DRAWLINE':
+      console.log('ADD_DRAWLINE', action.drawLineCfg);
+
       newDrawLines = state.game.drawLines;
-      newDrawLines.push(action.drawLine);
+      newDrawLines.push(action.drawLineCfg);
       
-      console.log('ADD_DRAWLINE', newDrawLines);
       return {
         ...state,
         attendStatus: {
@@ -184,9 +197,9 @@ const rootReducer = (state = initialState, action) => {
       }
 
     case 'REMOVE_DRAWLINE':
+      console.log('REMOVE_DRAWLINE', action.mongoId);
       newDrawLines = state.game.drawLines.filter(
-        (line, index, arr) => { return line.id !== action.drawLineId });
-      console.log('REMOVE_DRAWLINE', action.drawLineId, newDrawLines);
+        (line, index, arr) => { return line._id !== action.mongoId });
       return {
         ...state,
         game: {
@@ -224,7 +237,8 @@ const rootReducer = (state = initialState, action) => {
       }
 
     case 'SET_SCORETABLE_ROWS':
-      let newState = {
+      console.log('SET_SCORETABLE_ROWS', action.rows);
+      return {
         ...state,
         game: {
           ...state.game,
@@ -234,8 +248,6 @@ const rootReducer = (state = initialState, action) => {
           }
         }
       };
-      //console.log('SET_SCORETABLE_ROWS', newState);
-      return newState;
       
     case 'SET_SCORETABLE_COLUMNS':
       return {

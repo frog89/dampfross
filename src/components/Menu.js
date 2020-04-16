@@ -1,22 +1,20 @@
 import React from 'react';
-import axios from 'axios';
 import { connect } from 'react-redux';
 
+import { setGame, reloadGame } from '../actions/gameActions';
 import { setKonvaRedraw } from '../actions/konvaActions';
 
 class Menu extends React.Component {
   onReloadClick = (event) => {
-    axios.get(`http://localhost:5000/games/${this.props.game._id}`)
-    .then((response) => {
-      let game = response.data;
-      console.log('onReloadClick', game);
-      this.props.setGame(game);
-      this.props.setKonvaRedraw(true);
-    })
-    .catch(err => {
-      console.log('loadGame', err);
-      this.setState({ error: err });
-    });
+    const cbSuccess = (newGame) => {
+      console.log('onReloadClick', newGame);
+      this.props.setGame(newGame);
+      this.props.setKonvaRedraw(true);  
+    }
+    const cbErr = (err) => {
+      console.log(err);
+    }
+    reloadGame(this.props.game._id, cbSuccess, cbErr)
   }
 
   render() {
@@ -36,13 +34,6 @@ class Menu extends React.Component {
     )
   }
 }
-
-const setGame = (game) => {
-  return {
-    type: 'SET_GAME',
-    game: game,
-  }
-} 
 
 const mapStateToProps = (state) => {
   return {

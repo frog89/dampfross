@@ -15,10 +15,15 @@ function onLayerMouseClick(layer, event) {
   if (comb) {
     if (konvaState.drawStartComb) {
       let player = konvaState.attendStatus.player;
-      let line = drawLineForCombs(layer, player, konvaState.drawStartComb, comb);
+      let lineShape = drawLineForCombs(layer, mongoose.Types.ObjectId(), 
+        player, konvaState.drawStartComb, comb);
       let playerId = player._id.toString();
-      console.log('onLayerMouseClick-drawLine:', line, playerId);
-      konvaState.addDrawLine({id: line._id, points: line.attrs.points, playerId: playerId });
+      //console.log('onLayerMouseClick-drawLine:', line, playerId);
+      konvaState.addDrawLine({ 
+        _id: lineShape.attrs.mongoId, 
+        points: lineShape.attrs.points, 
+        playerId 
+      });
     }
     konvaState.drawStartComb = comb;
   }
@@ -134,15 +139,18 @@ function drawTempLine(layer, startComb, comb) {
   return line;
 }
 
-function drawLineForCombs(layer, player, startComb, comb) {
+function drawLineForCombs(layer, mongoId, player, startComb, comb) {
+  console.log('drawLineForCombs-mongoId:', mongoId)
+
   let linePoints = [startComb.x, startComb.y, comb.x, comb.y];
-  console.log('drawLine-linePoints:', linePoints);
-  return drawLine(layer, player, linePoints);
+  //console.log('drawLine-linePoints:', linePoints);
+  return drawLine(layer, mongoId, player, linePoints);
 }
 
-function drawLine(layer, player, linePoints) {
-  let name = `${NAME_START_DRAWLINE}-${player._id}`;
+function drawLine(layer, mongoId, player, linePoints) {
+  let name = `${NAME_START_DRAWLINE}-${mongoId}`;
   line = new Konva.Line({
+    mongoId,
     x: 0,
     y: 0,
     name: name,
@@ -151,10 +159,10 @@ function drawLine(layer, player, linePoints) {
     strokeWidth: 3,
   });
   line.on('click', (event) => {
-    //console.log('drawLine-click', event.evt);
     let lineShape = event.target;
+
     if (event.evt.ctrlKey) {
-      konvaState.removeDrawLine(lineShape._id);
+      konvaState.removeDrawLine(lineShape.attrs.mongoId);
       lineShape.destroy();
       layer.draw();
     }
@@ -169,6 +177,6 @@ function drawDrawLines(layer) {
     let drawLineCfg = konvaState.game.drawLines[i];
     let player = konvaState.game.players.find(p => p._id === drawLineCfg.playerId);
     //console.log('drawDrawLines:', player, drawLineCfg);
-    let line = drawLine(layer, player, drawLineCfg.points);
+    let line = drawLine(layer, drawLineCfg._id, player, drawLineCfg.points);
   }
 }

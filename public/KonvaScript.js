@@ -323,6 +323,8 @@ function drawElements(attendStatus, board, game, setPuppet,
     mapLayer.on('click', event => onLayerMouseClick(drawLayer, event));
     mapLayer.on('contextmenu', event => onLayerRightMouseClick(drawLayer, event));
     mapLayer.on('mousemove', event => onLayerMouseMove(drawLayer, event));
+
+    initDragDrop(puppetLayer, dragLayer);
   }
   drawPuppets(puppetLayer, dragLayer);
   drawDrawLines(drawLayer);

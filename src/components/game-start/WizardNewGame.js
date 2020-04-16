@@ -37,7 +37,7 @@ class WizardNewGame extends React.Component {
   }
   
   createGame = () => {
-    console.log('createGame', this.state);
+    //console.log('createGame', this.state);
     let currentPlayer = {
       _id: mongoose.Types.ObjectId(),
       name: this.state.playerName,
@@ -66,7 +66,7 @@ class WizardNewGame extends React.Component {
 
     axios.post('http://localhost:5000/games', game)
       .then((response) => {
-        console.log('create-new-success', response.data);
+        //console.log('create-new-success', response.data);
         this.loadBoard(response.data);
       })
       .catch(err => {
@@ -78,7 +78,7 @@ class WizardNewGame extends React.Component {
   loadBoard = (game) => {
     axios.get(`http://localhost:5000/boards/${game.board}`)
     .then(( response ) => {
-      console.log('loadBoard', game, response.data);
+      //console.log('loadBoard', game, response.data);
       this.props.setPlayer(game.players[0]);
       this.props.setGameAndBoard(game, response.data);
     })
