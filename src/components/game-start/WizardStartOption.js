@@ -50,10 +50,10 @@ class WizardStartOption extends React.Component {
           <div className="row justify-content-start">
             <div className="custom-control custom-radio">
               <input type="radio" className="custom-control-input" 
-                id="attendOption" name="gameOption"
+                id="returnOption" name="gameOption"
                 checked={this.props.attendOption === Constants.START_OPTION_RETURN_TO_GAME} 
                 onChange={this.onReturnOptionChanged}/>
-              <label className="custom-control-label" htmlFor="attendOption">Return to Game...</label>
+              <label className="custom-control-label" htmlFor="returnOption">Return to Game...</label>
             </div>
           </div>
           </div>

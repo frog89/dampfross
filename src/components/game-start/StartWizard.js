@@ -6,6 +6,7 @@ import StartHeaderBar from './StartHeaderBar';
 import WizardStartOption from './WizardStartOption';
 import WizardNewGame from './WizardNewGame';
 import WizardAttendGame from './WizardAttendGame';
+import WizardReturnToGame from './WizardReturnToGame';
 
 import StartBackgroundPic from '../../images/start-background.jpg';
 import store from '../../store';
@@ -20,8 +21,10 @@ class StartWizard extends React.Component {
     } else if (this.props.startWizardPage === 2) {
       if (this.props.attendOption === Constants.START_OPTION_NEW_GAME ) {
         wizardPage = <WizardNewGame/>;
-      } else {
+      } else if (this.props.attendOption === Constants.START_OPTION_ATTEND_GAME ) {
         wizardPage = <WizardAttendGame/>;
+      } else {
+        wizardPage = <WizardReturnToGame/>;
       }
     }
     return (

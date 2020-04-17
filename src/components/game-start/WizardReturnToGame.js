@@ -1,21 +1,25 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import axios from 'axios';
-import mongoose from 'mongoose';
 
-import { getFirstRow } from '../../actions/scoreTableActions';
-import { setAutoReload, saveGame } from '../../actions/gameActions';
+import { setAutoReload } from '../../actions/gameActions';
 import { setGameStarting, setStartWizardPage } from '../../actions/startWizardActions';
 import { setKonvaRedrawNeeded } from '../../actions/konvaActions';
 import './StartWizard.css';
 
-class WizardAttendGame extends React.Component {
+class WizardReturnToGame extends React.Component {
   state = {
-    playerName: '',
     gamePassword: '',
-    penColor: '',
+
+    playerNames: [],
+    playerName: '',
+    
+    gameNames: [],
     gameId: '',
-    games: [],
+
+    game: null,
+    board: null,
+
     error: '',
   }
 
@@ -24,39 +28,25 @@ class WizardAttendGame extends React.Component {
   }
 
   fetchGameNames = () => {
-    axios.get('http://localhost:5000/games/waiting')
+    axios.get('http://localhost:5000/games')
       .then((response) => {
-        this.setState({ games: response.data.games });
-        this.setState({
-          playerName: "Stephan",
-          gamePassword: "xy",
-          penColor: "darkgreen",
-        });
+        this.setState({ gameNames: response.data.games });
       })
       .catch(err => console.log(err));
   }
 
-  onGameChange = (event) => {
-    this.setState({gameId: event.target.value});
+  onSelectedGameChange = (event) => {
+    let gameId = event.target.value;
+    console.log('onSelectedGameChange:', gameId);
+    this.setState({gameId});
+    this.loadGame(gameId);
   }
 
   loadGame = (gameId) => {
+    this.setState({ error: null });
     axios.get(`http://localhost:5000/games/${gameId}`)
     .then((response) => {
       let game = response.data;
-      //console.log('loadGame', game);
-      if (game.players.find(p => p.name === this.state.playerName)) {
-        this.setState({ error: 'Player does already exists. Choose another name!'});
-        return;
-      }
-      if (game.players.find(p => p.penColor === this.state.penColor)) {
-        this.setState({ error: 'Pen color does already exists. Choose another color!'});
-        return;
-      }
-      if (game.password !== this.state.gamePassword) {
-        this.setState({ error: 'Wrong game password!'});
-        return;
-      }
       this.loadBoard(game);
     })
     .catch(err => {
@@ -69,22 +59,13 @@ class WizardAttendGame extends React.Component {
     axios.get(`http://localhost:5000/boards/${game.board}`)
     .then(( response ) => {
       let board = response.data;
-      let currentPlayer = { 
-        _id: mongoose.Types.ObjectId(),
-        name: this.state.playerName,
-        penColor: this.state.penColor
-      };
-      game.players.push(currentPlayer);
-
-      let puppetPos = window.getPosForNewPuppet(game.puppets.length);
-      let puppet = { x: puppetPos.x, y: puppetPos.y, playerId: currentPlayer._id }
-      game.puppets.push(puppet);
-
-      let firstScoreTableRow = getFirstRow(game.players);
-      game.scoreTable.rows = [firstScoreTableRow];
-      saveGame(game, 
-        (game) => this.saveGameSuccessCallback(game, board, currentPlayer),
-        (err) => this.saveGameErrorCallback(err));
+      let playerNames = game.players.map(g => g.name);
+      this.setState({
+        game,
+        board,
+        playerName: '',
+        playerNames: playerNames
+      });
     })
     .catch(err => {
       console.log('loadBoard', err);
@@ -92,29 +73,20 @@ class WizardAttendGame extends React.Component {
     });
   }
 
-  saveGameSuccessCallback = (game, board, player) => {
-    this.props.setPlayer(player);
-    this.props.setGameAndBoard(game, board);
-    this.props.setAutoReload(true);
-    this.props.setKonvaRedrawNeeded(true);
-    this.props.setGameStarting(false);
-  }
-
-  saveGameErrorCallback = (err) => {
-    console.log('saveGame-err', err);
-    this.setState({error: err.data.message});
-  };
-
-  onPlayerNameChange = (event) => {
-    this.setState({playerName: event.target.value});
+  onPlayerNameChanged = (event) => {
+    let playerName = event.target.value;
+    let player = this.state.game.players.find(p => p.name === playerName);
+    console.log('onPlayerNameChanged:', playerName, player);
+    this.setState({
+      playerName,
+      player
+    });
   }
     
   onGamePasswordChange = (event) => {
-    this.setState({gamePassword: event.target.value});
-  }
-
-  onPenColorChange = (event) => {
-    this.setState({penColor: event.target.value});
+    let pwd = event.target.value;
+    console.log('onGamePasswordChange:', pwd);
+    this.setState({gamePassword: pwd});
   }
 
   onPrevButtonClicked = (event) => {
@@ -122,33 +94,43 @@ class WizardAttendGame extends React.Component {
   }
 
   onNextButtonClicked = (event) => {
-    this.loadGame(this.state.gameId);
+    if (this.state.game.password !== this.state.gamePassword) {
+      this.setState({
+        error: 'Wrong game password!'
+      });
+      return;
+    }
+
+    this.props.setPlayer(this.state.player);
+    this.props.setGameAndBoard(this.state.game, this.state.board);
+    this.props.setAutoReload(true);
+    this.props.setKonvaRedrawNeeded(true);
+    this.props.setGameStarting(false);
   }
 
   render() {
     const gameChooser = 
       <select className="combobox form-control" name="gameChooser" id="game"
-        onChange={this.onGameChange} value={this.state.gameId}
+        onChange={this.onSelectedGameChange} value={this.state.gameId}
       >
         <option value="">Select Game</option> 
         {
-          this.state.games.map((game, key) => {
+          this.state.gameNames.map((game, key) => {
             return <option value={game._id} key={key}>{game.name}</option>;
           })
         } 
       </select>;
 
-    const penChooser = 
+    const playerChooser = 
       <select className="combobox form-control" name="colorChooser" id="penColor"
-        onChange={this.onPenColorChange} value={this.state.penColor}
+        onChange={this.onPlayerNameChanged} value={this.state.playerName}
       >
-        <option value="">Select Color</option>
+        <option value="">Select your name</option>
         {
-          this.props.penColors.map((color, key) => {
-            return <option value={color.colorValue} key={key}
-              style={{background: `${color.colorValue}`, color: 'black'}}
+          this.state.playerNames.map((name, key) => {
+            return <option value={name} key={key}
             >
-              {color.colorName}
+              {name}
             </option>;
           })
         } 
@@ -157,27 +139,15 @@ class WizardAttendGame extends React.Component {
     const nextButtonDisabledStyle = 
       (this.state.playerName && this.state.playerName.length > 0 &&
       this.state.gameId && this.state.gameId.length > 0 &&
-      this.state.gamePassword && this.state.gamePassword.length > 0 &&
-      this.state.penColor && this.state.penColor.length > 0) ?
+      this.state.gamePassword && this.state.gamePassword.length > 0) ?
       '' : 'disabled';
 
     return (
       <div className="card text-center align-middle mt-3">
         <div className="card-header">
-          <h5>Attend Game Settings</h5>
+          <h5>Return to Game Settings</h5>
         </div>
         <div className="card-body">
-          <div className="form-group text-left">
-            <label htmlFor="player">Player Name:</label>
-            <input type="text" className="form-control" id="player" placeholder="Enter name..."
-              onChange={this.onPlayerNameChange} value={this.state.playerName}
-            />
-          </div>
-
-          <div className="form-group text-left">
-            <label htmlFor="game">Game:</label>
-            {gameChooser}
-          </div>
 
           <div className="form-group text-left">
             <label htmlFor="game">Game Password:</label>
@@ -187,8 +157,13 @@ class WizardAttendGame extends React.Component {
           </div>
 
           <div className="form-group text-left">
-            <label htmlFor="penColor">Pen Color:</label>
-            {penChooser}
+            <label htmlFor="game">Game:</label>
+            {gameChooser}
+          </div>
+
+          <div className="form-group text-left">
+            <label htmlFor="player">Player:</label>
+            {playerChooser}
           </div>
 
           <div className="form-group text-left">
@@ -245,4 +220,4 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(WizardAttendGame);
+export default connect(mapStateToProps, mapDispatchToProps)(WizardReturnToGame);
