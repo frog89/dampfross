@@ -3,14 +3,16 @@ import Dices from './Dices';
 import Menu from './Menu';
 import CurrentPlayerInfo from './CurrentPlayerInfo';
 import GameStatusWaiting from './GameStatusWaiting'
+import ErrorMessage from './ErrorMessage'
 
 import Expand from '../images/expand.png';
 import Collapse from '../images/collapse.png';
 import AutoReload from '../images/auto-reload.png';
 import NoAutoReload from '../images/no-auto-reload.png';
 import { connect } from 'react-redux';
-import { saveGame } from '../actions/gameActions';
 import * as Constants from '../constants';
+
+import { setAutoReload } from '../actions/gameActions';
 
 import './HeaderBar.css';
 
@@ -25,14 +27,6 @@ class HeaderBar extends React.Component {
   expand = () => {
     this.props.setScoreTableVisibility(true);
   }
-  
-  onSaveButtonClicked = (event) => {
-    this.setState({saveButtonDisabledStyle: 'disabled'});
-    saveGame(this.props.game, (newGame) => {
-      console.log('Game saved');
-      this.setState({saveButtonDisabledStyle: ''});
-    }, (err) => console.log(err));
-  }
 
   switchAutoReloadOn = () => {
     this.props.setAutoReload(true);
@@ -43,11 +37,18 @@ class HeaderBar extends React.Component {
   }
 
   render() {
-    const autoReloadButton = this.props.session.isAutoReload ?
+    const errorMessage = (this.props.errorMessage && this.props.errorMessage.length > 0) ?
+      <div className="col-auto align-self-center">
+        <ErrorMessage/>
+      </div>        
+      :
+      null;
+
+    const autoReloadButton = this.props.isAutoReload ?
       <a href="/#"><img src={AutoReload} alt="AutoReload" onClick={this.switchAutoReloadOff}/></a> :
       <a href="/#"><img src={NoAutoReload} alt="NoAutoReload" onClick={this.switchAutoReloadOn}/></a>;
 
-    const visiButton = this.props.session.isScoreTableVisible ?
+    const visiButton = this.props.isScoreTableVisible ?
       <a href="/#"><img src={Collapse} alt="collapse" onClick={this.collapse}/></a> :
       <a href="/#"><img src={Expand} alt="expand" onClick={this.expand}/></a>;
 
@@ -63,6 +64,7 @@ class HeaderBar extends React.Component {
                   <b className="p-3">Dampfross</b>
                 </span>
               </div>
+              {errorMessage}
               <div className="col-auto align-self-center">
                 {autoReloadButton}
               </div>        
@@ -85,7 +87,7 @@ class HeaderBar extends React.Component {
                   <Menu/>
                 </div>
                 <div className="col-auto align-self-center">
-                  <CurrentPlayerInfo player={this.props.session.player}/>
+                  <CurrentPlayerInfo player={this.props.player}/>
                 </div>
                 <div className="col-auto align-self-center">
                   {visiButton}
@@ -99,13 +101,6 @@ class HeaderBar extends React.Component {
   }
 }
 
-const setAutoReload = (isAutoReload) => {
-  return {
-    type: 'SET_AUTO_RELOAD',
-    isAutoReload
-  }
-} 
-
 const setScoreTableVisibility = (isVisible) => {
   //console.log('setScoreTableVisibility:');
   return {
@@ -116,7 +111,10 @@ const setScoreTableVisibility = (isVisible) => {
 
 const mapStateToProps = (state) => {
   return {
-    session: state.session,
+    errorMessage: state.session.errorMessage,
+    isAutoReload: state.session.isAutoReload,
+    isScoreTableVisible: state.session.isScoreTableVisible,
+    player: state.session.player,
     game: state.game
   }
 }

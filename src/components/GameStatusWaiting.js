@@ -1,19 +1,22 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { saveGame } from '../actions/gameActions';
+import { setSaveGameNeeded } from '../actions/gameActions';
 import * as Constants from '../constants';
+import './GameStatusWaiting.css';
 
 class GameStatusWaiting extends React.Component {
   onStartButtonClicked = (event) => {
-    this.props.saveRunningGame();
+    this.props.setGameStatus(Constants.GAME_STATUS_RUNNING);
+    this.props.setSaveGameNeeded(true);
   }
 
   render() {
     return (
       <div className="row justify-content-start">
         <div className="col-auto align-self-center">
-          <span>Waiting for other players...</span>
+          <p className="narrow_text">Waiting for<br/>        
+          other players...</p>
         </div>
         <div className="col-auto align-self-center">
           <a href="/#" className="btn btn-primary"
@@ -33,24 +36,6 @@ const setGameStatus = (status) => {
     status
   }
 }
-const saveChangedGame = (game) => {
-  return (dispatch) => {
-    saveGame(game, (newGame) => {
-      dispatch({
-        type: 'SAVE_GAME'
-      });
-    }, (err) => console.log(err))
-  }
-}
-
-const saveRunningGame = () => {
-  return (dispatch, getState) => {
-    dispatch(setGameStatus(Constants.GAME_STATUS_RUNNING));
-
-    let state = getState();
-    dispatch(saveChangedGame(state.game));
-  }
-}
 
 const mapStateToProps = (state) => {
   return {
@@ -61,8 +46,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     setGameStatus: (status) => { dispatch(setGameStatus(status)) },
-    saveChangedGame: (game) => { dispatch(saveChangedGame(game)) },
-    saveRunningGame: () => { dispatch(saveRunningGame()) },
+    setSaveGameNeeded: (isNeeded) => { dispatch(setSaveGameNeeded(isNeeded)) },
   }
 }
 

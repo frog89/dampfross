@@ -1,9 +1,12 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import axios from 'axios';
 import mongoose from 'mongoose';
+
 import { getFirstRow } from '../../actions/scoreTableActions';
-import { saveGame } from '../../actions/gameActions';
-import { connect } from 'react-redux';
+import { setAutoReload, saveGame } from '../../actions/gameActions';
+import { setGameStarting, setStartWizardPage } from '../../actions/startWizardActions';
+import { setKonvaRedrawNeeded } from '../../actions/konvaActions';
 import './StartWizard.css';
 
 class WizardAttendGame extends React.Component {
@@ -92,6 +95,9 @@ class WizardAttendGame extends React.Component {
   saveGameSuccessCallback = (game, board, player) => {
     this.props.setPlayer(player);
     this.props.setGameAndBoard(game, board);
+    this.props.setGameStarting(false);
+    this.props.setAutoReload(true);
+    this.props.setKonvaRedrawNeeded(true);
   }
 
   saveGameErrorCallback = (err) => {
@@ -222,13 +228,6 @@ const setGameAndBoard = (game, board) => {
   }
 } 
 
-const setStartWizardPage = (page) => {
-  return {
-    type: 'SET_START_WIZARD_PAGE',
-    page
-  }
-} 
-
 const mapStateToProps = (state) => {
   return {
     penColors: state.session.penColors,
@@ -240,6 +239,9 @@ const mapDispatchToProps = (dispatch) => {
     setStartWizardPage: (page) => { dispatch(setStartWizardPage(page)) },
     setGameAndBoard: (game, board) => { dispatch(setGameAndBoard(game, board)) },
     setPlayer: (player) => { dispatch(setPlayer(player)) },
+    setGameStarting: (isStarting) => { dispatch(setGameStarting(isStarting)) },
+    setKonvaRedrawNeeded: (isRedrawNeeded) => { dispatch(setKonvaRedrawNeeded(isRedrawNeeded)) },
+    setAutoReload: (isAutoReload) => { dispatch(setAutoReload(isAutoReload)) },
   }
 }
 

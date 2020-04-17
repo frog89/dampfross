@@ -7,11 +7,13 @@ import * as Constants from '../constants';
 
 const initialState = {
   session: {
+    errorMessage: null,
     player: null,
-    isAutoReload: true,
+    isAutoReload: false,
     isGameStarting: true,
     isScoreTableVisible: true,
     isKonvaRedrawNeeded: false,
+    isKonvaDeleteNeeded: false,
     isReloadGameNeeded: false,
     isSaveGameNeeded: false,
     startWizardPage: 1,
@@ -83,6 +85,26 @@ const initialState = {
 const rootReducer = (state = initialState, action) => {
   let newDrawLines = null;
   switch(action.type) {
+    case 'SET_GAME_STARTING':
+      console.log('SET_GAME_STARTING', action.isStarting);
+      return {
+        ...state,
+        session: {
+          ...state.session,
+          isGameStarting: action.isStarting,
+        },
+      }
+
+    case 'SET_ERROR_MESSAGE':
+      console.log('SET_ERROR_MESSAGE', action.message);
+      return {
+        ...state,
+        session: {
+          ...state.session,
+          errorMessage: action.message,
+        },
+      }
+    
     case 'SET_SAVE_GAME_NEEDED':
       console.log('SET_SAVE_GAME_NEEDED', action.isNeeded);
       return {
@@ -117,13 +139,23 @@ const rootReducer = (state = initialState, action) => {
         },
       }
 
-    case 'SET_KONVA_REDRAW':
-      console.log('SET_KONVA_REDRAW', action.isRedrawNeeded);
+    case 'SET_KONVA_REDRAW_NEEDED':
+      console.log('SET_KONVA_REDRAW_NEEDED', action.isNeeded);
       return {
         ...state,
         session: {
           ...state.session,
-          isKonvaRedrawNeeded: action.isRedrawNeeded,
+          isKonvaRedrawNeeded: action.isNeeded,
+        },
+      }
+
+    case 'SET_KONVA_DELETE_NEEDED':
+      console.log('SET_KONVA_DELETE_NEEDED', action.isNeeded);
+      return {
+        ...state,
+        session: {
+          ...state.session,
+          isKonvaDeleteNeeded: action.isNeeded,
         },
       }
 
@@ -160,7 +192,6 @@ const rootReducer = (state = initialState, action) => {
         ...state,
         session: {
           ...state.session,
-          isGameStarting: false,          
         },
         game: action.game,
         board: action.board

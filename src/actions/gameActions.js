@@ -1,5 +1,12 @@
 import axios from 'axios';
 
+export const setAutoReload = (isAutoReload) => {
+  return {
+    type: 'SET_AUTO_RELOAD',
+    isAutoReload
+  }
+} 
+
 export const setSaveGameNeeded = (isNeeded) => {
   return {
     type: 'SET_SAVE_GAME_NEEDED',
@@ -48,7 +55,6 @@ export const actAndSave = (actionBeforeSave) => {
     dispatch(saveGameDispatched(state.game));
   }
 }
-
 
 export const reloadGame = (gameId, successCallback, errorCallback) => {
   if (gameId === null) {

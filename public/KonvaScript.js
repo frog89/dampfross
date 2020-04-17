@@ -15,17 +15,26 @@ const combDiffY = COMB_RADIUS * 0.5;
 // so scrolling will look smoother
 const PADDING = 800;
 
-let konvaState = {
-  session: null,
-  board: null,
-  game: null,
-  setPuppet: null,
-  addDrawLine: null,
-  removeDrawLine: null,
+function cloneDefaultStage(){
+  let konvaStateDefault = {
+    session: null,
+    board: null,
+    game: null,
+    setPuppet: null,
+    addDrawLine: null,
+    removeDrawLine: null,
+  
+    stage: null,
+    drawMouseOverLine: null,
+    drawStartComb: null,
+  }
+  return {...konvaStateDefault};
+}
 
-  stage: null,
-  drawMouseOverLine: null,
-  drawStartComb: null,
+let konvaState = cloneDefaultStage();
+
+function getCombRadius() {
+    return COMB_RADIUS;
 }
 
 function getCombTypeName(comb) {
@@ -278,6 +287,13 @@ function initStage(width, height) {
     height: window.innerHeight + PADDING * 2
   });
   konvaState.stage = stage;
+}
+
+function deleteElements() {
+  if (konvaState.stage) {
+    konvaState.stage.destroy();
+    konvaState = cloneDefaultStage();
+  }
 }
 
 function drawElements(session, board, game, setPuppet, 

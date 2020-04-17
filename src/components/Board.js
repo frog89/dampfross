@@ -1,25 +1,25 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { setKonvaRedraw } from '../actions/konvaActions';
+import { setKonvaRedrawNeeded, setKonvaDeleteNeeded } from '../actions/konvaActions';
 import { setSaveGameNeeded } from '../actions/gameActions';
 import './Board.css';
 
 class Board extends React.Component {
   setPuppet = (puppetCfg) => {
-    console.log('setPuppet');
+    // console.log('setPuppet');
     this.props.setPuppetAction(puppetCfg);
     this.props.setSaveGameNeeded(true);
   }
 
   addDrawLine = (drawLineCfg) => {
-    console.log('addDrawLine:');
+    // console.log('addDrawLine:');
     this.props.addDrawLineAction(drawLineCfg);
     this.props.setSaveGameNeeded(true);
   }
 
   removeDrawLine = (mongoId) => {
-    console.log('removeDrawLine:');
+    // console.log('removeDrawLine:');
     this.props.removeDrawLineAction(mongoId);
     this.props.setSaveGameNeeded(true);
   }
@@ -29,10 +29,15 @@ class Board extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    if (this.props.session.isKonvaDeleteNeeded) {
+      this.props.setKonvaDeleteNeeded(false);
+      console.log('konva delete');
+      window.deleteElements();
+    }
     if (this.props.session.isKonvaRedrawNeeded) {
-      //console.log('konva redraw');
+      this.props.setKonvaRedrawNeeded(false);
+      console.log('konva redraw');
       this.redrawBoard();
-      setKonvaRedraw(false);
     }
   }
 
@@ -47,8 +52,8 @@ class Board extends React.Component {
   }
 
   render() {
-    let largeContiWidth = window.innerWidth; //window.getCombRadius() * 2 * this.props.board.width;
-    let largeContiHeight = window.innerHeight; //window.getCombRadius() * 2 * this.props.board.height;
+    let largeContiWidth = window.innerWidth + window.getCombRadius() * 0.5 * this.props.board.width;
+    let largeContiHeight = window.innerHeight + window.getCombRadius() * 0.5 * this.props.board.height;
     //console.log('large-container-size', largeContiWidth, largeContiHeight);
 
     return (
@@ -102,6 +107,8 @@ const mapDispatchToProps = (dispatch) => {
     addDrawLineAction: (drawLine) => { dispatch(addDrawLineAction(drawLine)) },
     removeDrawLineAction: (mongoId) => { dispatch(removeDrawLineAction(mongoId)) },
     setSaveGameNeeded: (isNeeded) => { dispatch(setSaveGameNeeded(isNeeded)) },
+    setKonvaRedrawNeeded: (isNeeded) => { dispatch(setKonvaRedrawNeeded(isNeeded)) },
+    setKonvaDeleteNeeded: (isNeeded) => { dispatch(setKonvaDeleteNeeded(isNeeded)) },
   }
 }
 

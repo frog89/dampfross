@@ -1,7 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { setGameStarting, setStartWizardPage } from '../actions/startWizardActions';
+import { setKonvaDeleteNeeded } from '../actions/konvaActions';
 
-import { setReloadGameNeeded, setSaveGameNeeded } from '../actions/gameActions';
+import { setAutoReload, setReloadGameNeeded, setSaveGameNeeded } from '../actions/gameActions';
 
 class Menu extends React.Component {
   onReloadClick = (event) => {
@@ -10,6 +12,13 @@ class Menu extends React.Component {
 
   onSaveClick = (event) => {
     this.props.setSaveGameNeeded(true);
+  }
+
+  onLeaveClick = (event) => {
+    this.props.setAutoReload(false);
+    this.props.setStartWizardPage(1);
+    this.props.setKonvaDeleteNeeded(true);
+    this.props.setGameStarting(true);
   }
 
   render() {
@@ -24,6 +33,7 @@ class Menu extends React.Component {
         <div className="dropdown-menu">
           <a className="dropdown-item" href="/#" onClick={this.onSaveClick}>Save Game...</a>
           <a className="dropdown-item" href="/#" onClick={this.onReloadClick}>Reload Game...</a>
+          <a className="dropdown-item" href="/#" onClick={this.onLeaveClick}>Leave Game...</a>
         </div>
       </div>
     )
@@ -39,6 +49,10 @@ const mapDispatchToProps = (dispatch) => {
   return {
     setReloadGameNeeded: (isNeeded) => { dispatch(setReloadGameNeeded(isNeeded)) },
     setSaveGameNeeded: (isNeeded) => { dispatch(setSaveGameNeeded(isNeeded)) },
+    setStartWizardPage: (page) => { dispatch(setStartWizardPage(page)) },
+    setGameStarting: (isStarting) => { dispatch(setGameStarting(isStarting)) },
+    setAutoReload: (isAutoReload) => { dispatch(setAutoReload(isAutoReload)) },
+    setKonvaDeleteNeeded: (isNeeded) => { dispatch(setKonvaDeleteNeeded(isNeeded)) },
   }
 }
 
