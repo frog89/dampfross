@@ -309,7 +309,7 @@ const rootReducer = (state = initialState, action) => {
       }
 
     case 'SET_SCORETABLE_ROWS':
-      console.log('SET_SCORETABLE_ROWS', action.rows.length);
+      console.log('SET_SCORETABLE_ROWS', action.rows);
       return {
         ...state,
         game: {

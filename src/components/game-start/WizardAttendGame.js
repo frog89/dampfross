@@ -75,6 +75,13 @@ class WizardAttendGame extends React.Component {
       let puppet = { x: puppetPos.x, y: puppetPos.y, playerId: currentPlayer._id }
       game.puppets.push(puppet);
 
+      let rows = game.scoreTable.rows;
+      for (let i = 0; i<rows.length; i++) {
+        let row = rows[i];
+        row[currentPlayer._id] = 20;
+      }
+      console.log('rows-new', game.scoreTable.rows);
+
       this.props.cbSaveGame(game, 
         (game) => this.saveGameSuccessCallback(game, board, currentPlayer),
         (err) => this.saveGameErrorCallback(err));
