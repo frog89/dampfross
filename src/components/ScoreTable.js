@@ -3,10 +3,8 @@ import { connect } from 'react-redux';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
-import { getColumnsForPlayers, getFirstRow } from '../actions/scoreTableActions';
-import { actAndSave } from '../actions/gameActions';
-
-import * as Constants from '../constants';
+import { getColumnsForPlayers } from '../actions/scoreTableActions';
+import { setSaveGameNeeded } from '../actions/gameActions';
 
 class ScoreTable extends React.Component {
   state = {
@@ -23,18 +21,31 @@ class ScoreTable extends React.Component {
     this.resetColumns();
   }
 
+  setValueChanged = (params) => {
+    let gridRow = params.data;
+    let gridCol = params.colDef;
+    let newVal  = params.newValue;
+    console.log('setValueChanged:', gridRow.no, gridCol.field, newVal);
+
+    let rowIdx = gridRow.no - 1;
+    let changedRow = { ...this.props.rows[rowIdx] };
+    changedRow[gridCol.field] = newVal;
+    let newRows = [
+      ...this.props.rows.slice(0, rowIdx), 
+      changedRow, 
+      ...this.props.rows.slice(rowIdx + 1) ];
+
+    this.props.setScoreTableRows(newRows);
+    this.props.setSaveGameNeeded(true);
+  }
+
   resetColumns() {
     if (this.state.columns.length === this.props.players.length + 1) {
       return;
     }
     
-    let cols = getColumnsForPlayers(this.props.players);
+    let cols = getColumnsForPlayers(this.props.players, this.setValueChanged);
     this.setState({ columns: cols });
-
-    if (this.props.gameStatus === Constants.GAME_STATUS_WAITING_FOR_PLAYERS) {
-      let firstRow = getFirstRow(this.props.players);
-      this.props.setScoreTableRows([firstRow]);
-    }
   }
 
   onGridReady = (params) => {
@@ -42,6 +53,7 @@ class ScoreTable extends React.Component {
     this.gridOptions.columnApi = params.columnApi;
 
     this.gridOptions.api.setColumnDefs(this.state.columns);
+    this.gridOptions.api.setRowData(this.props.rows);
     this.gridOptions.api.sizeColumnsToFit();
     this.setRows(this.props.rows);
   }
@@ -66,10 +78,16 @@ class ScoreTable extends React.Component {
 
   setRows = (rows) => {
     this.gridOptions.api.setRowData(rows);
-    this.props.saveRowsInGame(rows);
+    this.props.setScoreTableRows(rows);
+    this.props.setSaveGameNeeded(true);
   }
 
   render() {
+    let agGridOptions = {
+      getRowNodeId: function(row) {
+        return row.no;
+      },
+    }
     return (
       <div className="container-fluid" 
           style={{
@@ -96,6 +114,8 @@ class ScoreTable extends React.Component {
               onGridReady={this.onGridReady}
               rowData={this.props.rows}
               columnDefs={this.state.columns}
+              deltaRowDataMode={true}
+              gridOptions={agGridOptions}
               >
             </AgGridReact>
           </div>
@@ -103,10 +123,6 @@ class ScoreTable extends React.Component {
       </div>
     );
   }
-}
-
-const saveRowsInGame = (rows) => {
-  return actAndSave(setScoreTableRows(rows));
 }
 
 const setScoreTableRows = (rows) => {
@@ -128,8 +144,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     setScoreTableRows: rows => { dispatch(setScoreTableRows(rows)) },
-    actAndSave: actionBeforeSave => { dispatch(actAndSave(actionBeforeSave)) },
-    saveRowsInGame: rows => { dispatch(saveRowsInGame(rows)) },
+    setSaveGameNeeded: isNeeded => { dispatch(setSaveGameNeeded(isNeeded)) },
   }
 }
 

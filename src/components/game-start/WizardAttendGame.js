@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import axios from 'axios';
 import mongoose from 'mongoose';
 
-import { getFirstRow } from '../../actions/scoreTableActions';
 import { setAutoReload, saveGame } from '../../actions/gameActions';
 import { setGameStarting, setStartWizardPage } from '../../actions/startWizardActions';
 import { setKonvaRedrawNeeded } from '../../actions/konvaActions';
@@ -80,8 +79,6 @@ class WizardAttendGame extends React.Component {
       let puppet = { x: puppetPos.x, y: puppetPos.y, playerId: currentPlayer._id }
       game.puppets.push(puppet);
 
-      let firstScoreTableRow = getFirstRow(game.players);
-      game.scoreTable.rows = [firstScoreTableRow];
       saveGame(game, 
         (game) => this.saveGameSuccessCallback(game, board, currentPlayer),
         (err) => this.saveGameErrorCallback(err));

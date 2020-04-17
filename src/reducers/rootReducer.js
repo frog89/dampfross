@@ -85,6 +85,17 @@ const initialState = {
 const rootReducer = (state = initialState, action) => {
   let newDrawLines = null;
   switch(action.type) {
+    case 'RESET_STATE':
+      let newState = {
+        ...initialState,
+        session: {
+          ...initialState.session,
+          isKonvaDeleteNeeded: true
+        }
+      };
+      console.log('RESET_STATE', newState);
+      return newState;
+
     case 'SET_GAME_STARTING':
       console.log('SET_GAME_STARTING', action.isStarting);
       return {
@@ -170,7 +181,7 @@ const rootReducer = (state = initialState, action) => {
       }
       
     case 'SET_GAME':
-      console.log('SET_GAME', action.game.puppets.length);
+      console.log('SET_GAME', action.game._id);
       return {
         ...state,
         game: action.game
@@ -287,7 +298,7 @@ const rootReducer = (state = initialState, action) => {
       }
 
     case 'SET_SCORETABLE_ROWS':
-      console.log('SET_SCORETABLE_ROWS', action.rows);
+      console.log('SET_SCORETABLE_ROWS', action.rows.length);
       return {
         ...state,
         game: {

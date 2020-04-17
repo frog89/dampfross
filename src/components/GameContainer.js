@@ -12,7 +12,7 @@ import store from '../store';
 class GameContainer extends React.Component {
   doReloadGame = () => {
     const cbSuccess = (newGame) => {
-      console.log('onReloadClick', newGame);
+      // console.log('onReloadClick', newGame);
       this.props.setGame(newGame);
       this.props.setKonvaRedrawNeeded(true);  
     }

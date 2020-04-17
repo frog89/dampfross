@@ -60,7 +60,7 @@ export const reloadGame = (gameId, successCallback, errorCallback) => {
   if (gameId === null) {
     return;
   }
-  console.log('reloadGame:', gameId);
+  // console.log('reloadGame:', gameId);
   axios.get(`http://localhost:5000/games/${gameId}`)
     .then((response) => {
       let game = response.data;

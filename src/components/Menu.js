@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { setGameStarting, setStartWizardPage } from '../actions/startWizardActions';
 import { setKonvaDeleteNeeded } from '../actions/konvaActions';
-
 import { setAutoReload, setReloadGameNeeded, setSaveGameNeeded } from '../actions/gameActions';
 
 class Menu extends React.Component {
@@ -15,10 +14,7 @@ class Menu extends React.Component {
   }
 
   onLeaveClick = (event) => {
-    this.props.setAutoReload(false);
-    this.props.setStartWizardPage(1);
-    this.props.setKonvaDeleteNeeded(true);
-    this.props.setGameStarting(true);
+    this.props.resetState();
   }
 
   render() {
@@ -40,6 +36,12 @@ class Menu extends React.Component {
   }
 }
 
+const resetState = () => {
+  return {
+    type: 'RESET_STATE',
+  }
+} 
+
 const mapStateToProps = (state) => {
   return {
   }
@@ -53,6 +55,7 @@ const mapDispatchToProps = (dispatch) => {
     setGameStarting: (isStarting) => { dispatch(setGameStarting(isStarting)) },
     setAutoReload: (isAutoReload) => { dispatch(setAutoReload(isAutoReload)) },
     setKonvaDeleteNeeded: (isNeeded) => { dispatch(setKonvaDeleteNeeded(isNeeded)) },
+    resetState: () => { dispatch(resetState()) },
   }
 }
 

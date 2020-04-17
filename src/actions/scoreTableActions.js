@@ -8,14 +8,14 @@ export const getFirstRow = (players) => {
   return firstRow;
 }
 
-export const getColumnsForPlayers = (players) => {
-  let userColumns = getUserColumnsForPlayers(players);
+export const getColumnsForPlayers = (players, cbSetValue) => {
+  let userColumns = getUserColumnsForPlayers(players, cbSetValue);
   let cols = [{field: 'no', headerName: 'No.', resizable: false, editable: false}];
   cols.push(...userColumns);
   return cols;
 }
 
-export const getUserColumnsForPlayers = (players) => {
+export const getUserColumnsForPlayers = (players, cbSetValue) => {
   let userColumns = players.map((player, k) => {
     return ({
       valueGetter: function(params) {
@@ -25,6 +25,7 @@ export const getUserColumnsForPlayers = (players) => {
         let newValue = parseInt(params.newValue);
         newValue = isNaN(newValue) ? params.oldValue : newValue;
         params.data[player._id] = newValue;
+        cbSetValue(params);
         return true;
       },
       field: player._id,
