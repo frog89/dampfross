@@ -50,8 +50,8 @@ class StartWizard extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    startWizardPage: state.attendStatus.startWizardPage,
-    attendOption: state.attendStatus.attendOption,
+    startWizardPage: state.session.startWizardPage,
+    attendOption: state.session.attendOption,
   }
 }
 

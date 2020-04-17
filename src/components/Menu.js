@@ -1,20 +1,15 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { setGame, reloadGame } from '../actions/gameActions';
-import { setKonvaRedraw } from '../actions/konvaActions';
+import { setReloadGameNeeded, setSaveGameNeeded } from '../actions/gameActions';
 
 class Menu extends React.Component {
   onReloadClick = (event) => {
-    const cbSuccess = (newGame) => {
-      console.log('onReloadClick', newGame);
-      this.props.setGame(newGame);
-      this.props.setKonvaRedraw(true);  
-    }
-    const cbErr = (err) => {
-      console.log(err);
-    }
-    reloadGame(this.props.game._id, cbSuccess, cbErr)
+    this.props.setReloadGameNeeded(true);
+  }
+
+  onSaveClick = (event) => {
+    this.props.setSaveGameNeeded(true);
   }
 
   render() {
@@ -27,8 +22,8 @@ class Menu extends React.Component {
           Actions
         </button>
         <div className="dropdown-menu">
+          <a className="dropdown-item" href="/#" onClick={this.onSaveClick}>Save Game...</a>
           <a className="dropdown-item" href="/#" onClick={this.onReloadClick}>Reload Game...</a>
-          <a className="dropdown-item" href="/#">Something else here</a>
         </div>
       </div>
     )
@@ -37,14 +32,13 @@ class Menu extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    game: state.game
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setGame: (game) => { dispatch(setGame(game)) },
-    setKonvaRedraw: (isRedrawNeeded) => { dispatch(setKonvaRedraw(isRedrawNeeded)) },
+    setReloadGameNeeded: (isNeeded) => { dispatch(setReloadGameNeeded(isNeeded)) },
+    setSaveGameNeeded: (isNeeded) => { dispatch(setSaveGameNeeded(isNeeded)) },
   }
 }
 

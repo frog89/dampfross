@@ -16,7 +16,7 @@ const combDiffY = COMB_RADIUS * 0.5;
 const PADDING = 800;
 
 let konvaState = {
-  attendStatus: null,
+  session: null,
   board: null,
   game: null,
   setPuppet: null,
@@ -280,10 +280,10 @@ function initStage(width, height) {
   konvaState.stage = stage;
 }
 
-function drawElements(attendStatus, board, game, setPuppet, 
+function drawElements(session, board, game, setPuppet, 
     addDrawLine, removeDrawLine) {  
   ({ width, height, combs, borders, rivers, townTexts, textObjects } = board);
-  konvaState.attendStatus = attendStatus;
+  konvaState.session = session;
   konvaState.game = game;
   konvaState.board = board;
   konvaState.setPuppet = setPuppet;

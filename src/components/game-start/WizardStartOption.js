@@ -83,7 +83,7 @@ const setStartWizardPage = (page) => {
 
 const mapStateToProps = (state) => {
   return {
-    attendOption: state.attendStatus.attendOption
+    attendOption: state.session.attendOption
   }
 }
 

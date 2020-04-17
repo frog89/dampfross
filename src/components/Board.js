@@ -2,30 +2,26 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { setKonvaRedraw } from '../actions/konvaActions';
-import { saveGame } from '../actions/gameActions';
+import { setSaveGameNeeded } from '../actions/gameActions';
 import './Board.css';
 
 class Board extends React.Component {
-  saveTheGame() {
-    saveGame(this.props.game, (newGame) => {
-      console.log('Game saved');
-      this.setState({saveButtonDisabledStyle: ''});
-    }, (err) => console.log(err));
-  }
-
   setPuppet = (puppetCfg) => {
+    console.log('setPuppet');
     this.props.setPuppetAction(puppetCfg);
-    this.saveTheGame();
+    this.props.setSaveGameNeeded(true);
   }
 
   addDrawLine = (drawLineCfg) => {
+    console.log('addDrawLine:');
     this.props.addDrawLineAction(drawLineCfg);
-    this.saveTheGame();
+    this.props.setSaveGameNeeded(true);
   }
 
   removeDrawLine = (mongoId) => {
+    console.log('removeDrawLine:');
     this.props.removeDrawLineAction(mongoId);
-    this.saveTheGame();
+    this.props.setSaveGameNeeded(true);
   }
 
   componentDidMount() {
@@ -33,7 +29,7 @@ class Board extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.props.attendStatus.isKonvaRedrawNeeded) {
+    if (this.props.session.isKonvaRedrawNeeded) {
       //console.log('konva redraw');
       this.redrawBoard();
       setKonvaRedraw(false);
@@ -42,7 +38,7 @@ class Board extends React.Component {
 
   redrawBoard() {
     window.drawElements(
-      this.props.attendStatus, 
+      this.props.session, 
       this.props.board, 
       this.props.game, 
       this.setPuppet,
@@ -94,7 +90,7 @@ const removeDrawLineAction = (mongoId) => {
 
 const mapStateToProps = (state) => {
   return {
-    attendStatus: state.attendStatus,
+    session: state.session,
     game: state.game,
     board: state.board,
   }
@@ -104,7 +100,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     setPuppetAction: (puppet) => { dispatch(setPuppetAction(puppet)) },
     addDrawLineAction: (drawLine) => { dispatch(addDrawLineAction(drawLine)) },
-    removeDrawLineAction: (mongoId) => { dispatch(removeDrawLineAction(mongoId)) }
+    removeDrawLineAction: (mongoId) => { dispatch(removeDrawLineAction(mongoId)) },
+    setSaveGameNeeded: (isNeeded) => { dispatch(setSaveGameNeeded(isNeeded)) },
   }
 }
 

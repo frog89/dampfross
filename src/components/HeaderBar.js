@@ -43,18 +43,11 @@ class HeaderBar extends React.Component {
   }
 
   render() {
-    const saveButton = 
-      <a href="/#" className={`btn btn-danger ${this.state.saveButtonDisabledStyle}`}
-        onClick={this.onSaveButtonClicked}
-      >
-        Save
-      </a>; 
-
-    const autoReloadButton = this.props.attendStatus.isAutoReload ?
+    const autoReloadButton = this.props.session.isAutoReload ?
       <a href="/#"><img src={AutoReload} alt="AutoReload" onClick={this.switchAutoReloadOff}/></a> :
       <a href="/#"><img src={NoAutoReload} alt="NoAutoReload" onClick={this.switchAutoReloadOn}/></a>;
 
-    const visiButton = this.props.game.scoreTable.isVisible ?
+    const visiButton = this.props.session.isScoreTableVisible ?
       <a href="/#"><img src={Collapse} alt="collapse" onClick={this.collapse}/></a> :
       <a href="/#"><img src={Expand} alt="expand" onClick={this.expand}/></a>;
 
@@ -70,9 +63,6 @@ class HeaderBar extends React.Component {
                   <b className="p-3">Dampfross</b>
                 </span>
               </div>
-              <div className="col-auto align-self-center">
-                {saveButton}
-              </div>        
               <div className="col-auto align-self-center">
                 {autoReloadButton}
               </div>        
@@ -95,7 +85,7 @@ class HeaderBar extends React.Component {
                   <Menu/>
                 </div>
                 <div className="col-auto align-self-center">
-                  <CurrentPlayerInfo player={this.props.attendStatus.player}/>
+                  <CurrentPlayerInfo player={this.props.session.player}/>
                 </div>
                 <div className="col-auto align-self-center">
                   {visiButton}
@@ -126,7 +116,7 @@ const setScoreTableVisibility = (isVisible) => {
 
 const mapStateToProps = (state) => {
   return {
-    attendStatus: state.attendStatus,
+    session: state.session,
     game: state.game
   }
 }

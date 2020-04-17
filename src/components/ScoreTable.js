@@ -4,6 +4,7 @@ import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import { getColumnsForPlayers, getFirstRow } from '../actions/scoreTableActions';
+import { actAndSave } from '../actions/gameActions';
 
 import * as Constants from '../constants';
 
@@ -64,8 +65,8 @@ class ScoreTable extends React.Component {
   }
 
   setRows = (rows) => {
-    this.props.setScoreTableRows(rows);
     this.gridOptions.api.setRowData(rows);
+    this.props.saveRowsInGame(rows);
   }
 
   render() {
@@ -104,6 +105,10 @@ class ScoreTable extends React.Component {
   }
 }
 
+const saveRowsInGame = (rows) => {
+  return actAndSave(setScoreTableRows(rows));
+}
+
 const setScoreTableRows = (rows) => {
   return {
     type: 'SET_SCORETABLE_ROWS',
@@ -114,7 +119,7 @@ const setScoreTableRows = (rows) => {
 const mapStateToProps = (state) => {
   return {
     players: state.game.players,
-    isScoreTableVisible: state.game.scoreTable.isVisible,
+    isScoreTableVisible: state.session.isScoreTableVisible,
     rows: state.game.scoreTable.rows,
     gameStatus: state.game.status,
   }
@@ -123,6 +128,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     setScoreTableRows: rows => { dispatch(setScoreTableRows(rows)) },
+    actAndSave: actionBeforeSave => { dispatch(actAndSave(actionBeforeSave)) },
+    saveRowsInGame: rows => { dispatch(saveRowsInGame(rows)) },
   }
 }
 

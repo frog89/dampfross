@@ -6,13 +6,16 @@
 import * as Constants from '../constants';
 
 const initialState = {
-  attendStatus: {
+  session: {
     player: null,
     isAutoReload: true,
     isGameStarting: true,
+    isScoreTableVisible: true,
+    isKonvaRedrawNeeded: false,
+    isReloadGameNeeded: false,
+    isSaveGameNeeded: false,
     startWizardPage: 1,
     attendOption: Constants.START_OPTION_NEW_GAME,
-    isKonvaRedrawNeeded: false,
     penColors: [
       { colorValue: 'blue', colorName: 'Blue' },
       { colorValue: 'crimson', colorName: 'Red'},
@@ -40,7 +43,6 @@ const initialState = {
       whiteB: 0  
     },
     scoreTable: {
-      isVisible: true,
       rows: [{ no:1, fa: 20, ow: 20, mp: 20, sk: 20, tb: 20}],
       columns: [
         { field: "no", headerName: "No.", resizable: false, editable: false, width: 120 }
@@ -81,6 +83,26 @@ const initialState = {
 const rootReducer = (state = initialState, action) => {
   let newDrawLines = null;
   switch(action.type) {
+    case 'SET_SAVE_GAME_NEEDED':
+      console.log('SET_SAVE_GAME_NEEDED', action.isNeeded);
+      return {
+        ...state,
+        session: {
+          ...state.session,
+          isSaveGameNeeded: action.isNeeded,
+        },
+      }
+
+    case 'SET_RELOAD_GAME_NEEDED':
+      console.log('SET_RELOAD_GAME_NEEDED', action.isNeeded);
+      return {
+        ...state,
+        session: {
+          ...state.session,
+          isReloadGameNeeded: action.isNeeded,
+        },
+      }
+  
     case 'SAVE_GAME':
       console.log('SAVE_GAME');
       return state;
@@ -89,8 +111,8 @@ const rootReducer = (state = initialState, action) => {
       console.log('SET_AUTO_RELOAD', action.isAutoReload);
       return {
         ...state,
-        attendStatus: {
-          ...state.attendStatus,
+        session: {
+          ...state.session,
           isAutoReload: action.isAutoReload,
         },
       }
@@ -99,8 +121,8 @@ const rootReducer = (state = initialState, action) => {
       console.log('SET_KONVA_REDRAW', action.isRedrawNeeded);
       return {
         ...state,
-        attendStatus: {
-          ...state.attendStatus,
+        session: {
+          ...state.session,
           isKonvaRedrawNeeded: action.isRedrawNeeded,
         },
       }
@@ -109,8 +131,8 @@ const rootReducer = (state = initialState, action) => {
       console.log('SET_PLAYER', action.player);
       return {
         ...state,
-        attendStatus: {
-          ...state.attendStatus,
+        session: {
+          ...state.session,
           player: action.player,
         },
       }
@@ -136,8 +158,8 @@ const rootReducer = (state = initialState, action) => {
       console.log('SET_GAME_AND_BOARD', action.game.name, action.board.name);
       return {
         ...state,
-        attendStatus: {
-          ...state.attendStatus,
+        session: {
+          ...state.session,
           isGameStarting: false,          
         },
         game: action.game,
@@ -148,8 +170,8 @@ const rootReducer = (state = initialState, action) => {
       console.log('SET_START_WIZARD_PAGE', action.page);
       return {
         ...state,
-        attendStatus: {
-          ...state.attendStatus,
+        session: {
+          ...state.session,
           startWizardPage: action.page
         }
       }
@@ -158,8 +180,8 @@ const rootReducer = (state = initialState, action) => {
       console.log('SET_ATTEND_OPTION', action.attendOption);
       return {
         ...state,
-        attendStatus: {
-          ...state.attendStatus,
+        session: {
+          ...state.session,
           attendOption: action.attendOption
         }
       }
@@ -186,8 +208,8 @@ const rootReducer = (state = initialState, action) => {
       
       return {
         ...state,
-        attendStatus: {
-          ...state.attendStatus,
+        session: {
+          ...state.session,
           isKonvaRedrawNeeded: true
         },
         game: {
@@ -227,12 +249,9 @@ const rootReducer = (state = initialState, action) => {
       console.log('SET_SCORETABLE_VISIBILITY:', action.isVisible)
       return {
         ...state,
-        game: {
-          ...state.game,
-          scoreTable: {
-            ...state.game.scoreTable,
-            isVisible: action.isVisible
-          }
+        session: {
+          ...state.session,
+          isScoreTableVisible: action.isVisible
         }
       }
 

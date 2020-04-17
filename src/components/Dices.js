@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { setSaveGameNeeded } from '../actions/gameActions';
 
 import AnimatedDice from '../images/dice.gif';
 import White1 from '../images/dice-w1.png';
@@ -67,16 +68,17 @@ class Dices extends React.Component {
   dice = () => {
     this.props.setDices(0, 0, 0, 0);
     this.setState({showAnimatedDices: true });
-    const rA = this.getRandomDice();
-    const wA = this.getRandomDice();
-    const rB = this.getRandomDice();
-    const wB = this.getRandomDice();
+    const redA = this.getRandomDice();
+    const whiteA = this.getRandomDice();
+    const redB = this.getRandomDice();
+    const whiteB = this.getRandomDice();
 
     setTimeout(() => {
       this.setState({
         showAnimatedDices: false
       });
-      this.props.setDices(rA, wA, rB, wB);
+      this.props.setDices(redA, whiteA, redB, whiteB);
+      this.props.setSaveGameNeeded(true);
     }, 1000);
   }
 
@@ -128,9 +130,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setDices: (redA, whiteA, redB, whiteB) => { 
-      dispatch(setDices(redA, whiteA, redB, whiteB)) 
-    }
+    setDices: (redA, whiteA, redB, whiteB) => { dispatch(setDices(redA, whiteA, redB, whiteB)) },
+    setSaveGameNeeded: (isNeeded) => { dispatch(setSaveGameNeeded(isNeeded)) },
   }
 }
 

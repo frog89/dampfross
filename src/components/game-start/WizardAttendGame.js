@@ -231,7 +231,7 @@ const setStartWizardPage = (page) => {
 
 const mapStateToProps = (state) => {
   return {
-    penColors: state.attendStatus.penColors,
+    penColors: state.session.penColors,
   }
 }
 

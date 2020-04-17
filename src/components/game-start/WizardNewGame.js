@@ -56,7 +56,6 @@ class WizardNewGame extends React.Component {
         redA: 0, whiteA: 0, redB: 0, whiteB: 0,
       },
       scoreTable: { 
-        isVisible: true,
         rows: [firstScoreTableRow],
       },
       puppets: [puppet],
@@ -246,7 +245,7 @@ const setStartWizardPage = (page) => {
 
 const mapStateToProps = (state) => {
   return {
-    penColors: state.attendStatus.penColors,
+    penColors: state.session.penColors,
   }
 }
 

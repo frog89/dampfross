@@ -14,7 +14,7 @@ function onLayerMouseClick(layer, event) {
   //console.log('onLayerMouseClick-comb', comb);
   if (comb) {
     if (konvaState.drawStartComb) {
-      let player = konvaState.attendStatus.player;
+      let player = konvaState.session.player;
       let lineShape = drawLineForCombs(layer, mongoose.Types.ObjectId(), 
         player, konvaState.drawStartComb, comb);
       let playerId = player._id.toString();
