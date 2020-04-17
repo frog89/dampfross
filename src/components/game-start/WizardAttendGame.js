@@ -3,9 +3,9 @@ import { connect } from 'react-redux';
 import axios from 'axios';
 import mongoose from 'mongoose';
 
-import { setAutoReload, saveGame } from '../../actions/gameActions';
-import { setGameStarting, setStartWizardPage } from '../../actions/startWizardActions';
+import { setAutoReload } from '../../actions/gameActions';
 import { setKonvaRedrawNeeded } from '../../actions/konvaActions';
+import { setStartWizardPage, setGameStarting } from '../../actions/startWizardActions';
 import './StartWizard.css';
 
 class WizardAttendGame extends React.Component {
@@ -24,26 +24,22 @@ class WizardAttendGame extends React.Component {
 
   fetchGameNames = () => {
     axios.get('http://localhost:5000/games/waiting')
-      .then((response) => {
-        this.setState({ games: response.data.games });
-        this.setState({
-          playerName: "Stephan",
-          gamePassword: "xy",
-          penColor: "darkgreen",
-        });
-      })
-      .catch(err => console.log(err));
-  }
-
-  onGameChange = (event) => {
-    this.setState({gameId: event.target.value});
+    .then((response) => {
+      this.setState({ games: response.data.games });
+      this.setState({
+        playerName: "Stephan",
+        gamePassword: "xy",
+        penColor: "darkgreen",
+      });
+    })
+    .catch(err => console.log(err));
   }
 
   loadGame = (gameId) => {
     axios.get(`http://localhost:5000/games/${gameId}`)
     .then((response) => {
       let game = response.data;
-      //console.log('loadGame', game);
+      // console.log('loadGame', game._id);
       if (game.players.find(p => p.name === this.state.playerName)) {
         this.setState({ error: 'Player does already exists. Choose another name!'});
         return;
@@ -60,8 +56,8 @@ class WizardAttendGame extends React.Component {
     })
     .catch(err => {
       console.log('loadGame', err);
-      this.setState({ error: err });
-    });
+      this.setState({ error: err.toString() });
+    });  
   }
 
   loadBoard = (game) => {
@@ -79,14 +75,14 @@ class WizardAttendGame extends React.Component {
       let puppet = { x: puppetPos.x, y: puppetPos.y, playerId: currentPlayer._id }
       game.puppets.push(puppet);
 
-      saveGame(game, 
+      this.props.cbSaveGame(game, 
         (game) => this.saveGameSuccessCallback(game, board, currentPlayer),
         (err) => this.saveGameErrorCallback(err));
     })
     .catch(err => {
       console.log('loadBoard', err);
-      this.setState({ error: err });
-    });
+      this.setState({ error: err.toString() });
+    });  
   }
 
   saveGameSuccessCallback = (game, board, player) => {
@@ -98,19 +94,27 @@ class WizardAttendGame extends React.Component {
   }
 
   saveGameErrorCallback = (err) => {
-    console.log('saveGame-err', err);
+    // console.log('saveGame-err', err);
     this.setState({error: err.data.message});
   };
 
+  onGameChange = (event) => {
+    // console.log('onGameChange');
+    this.setState({gameId: event.target.value});
+  }
+
   onPlayerNameChange = (event) => {
+    // console.log('onPlayerNameChange');
     this.setState({playerName: event.target.value});
   }
     
   onGamePasswordChange = (event) => {
+    // console.log('onGamePasswordChange');
     this.setState({gamePassword: event.target.value});
   }
 
   onPenColorChange = (event) => {
+    // console.log('onPenColorChange');
     this.setState({penColor: event.target.value});
   }
 
@@ -228,17 +232,18 @@ const setGameAndBoard = (game, board) => {
 const mapStateToProps = (state) => {
   return {
     penColors: state.session.penColors,
+    isGameStarting: state.session.isGameStarting,
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setStartWizardPage: (page) => { dispatch(setStartWizardPage(page)) },
+    setStartWizardPage: page => { dispatch(setStartWizardPage(page)) },
     setGameAndBoard: (game, board) => { dispatch(setGameAndBoard(game, board)) },
-    setPlayer: (player) => { dispatch(setPlayer(player)) },
-    setGameStarting: (isStarting) => { dispatch(setGameStarting(isStarting)) },
-    setKonvaRedrawNeeded: (isRedrawNeeded) => { dispatch(setKonvaRedrawNeeded(isRedrawNeeded)) },
-    setAutoReload: (isAutoReload) => { dispatch(setAutoReload(isAutoReload)) },
+    setPlayer: player => { dispatch(setPlayer(player)) },
+    setGameStarting: isStarting => { dispatch(setGameStarting(isStarting)) },
+    setKonvaRedrawNeeded: isRedrawNeeded => { dispatch(setKonvaRedrawNeeded(isRedrawNeeded)) },
+    setAutoReload: isAutoReload => { dispatch(setAutoReload(isAutoReload)) },
   }
 }
 

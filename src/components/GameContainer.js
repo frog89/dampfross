@@ -32,13 +32,19 @@ class GameContainer extends React.Component {
     }, 10000);
   }
 
-  doSaveGame = () => {
-    saveGame(this.props.game, (newGame) => {
+  doSaveGameWithCallbacks = (game, cbSuccess, cbError) => {
+    saveGame(game, (newGame) => {
       console.log('Game saved');
+      cbSuccess(newGame);
     }, (err) => {
       console.log(err);
       this.props.setErrorMessage('Error saving\\ngame!');
+      cbError(err);
     });
+  }
+
+  doSaveGame = () => {
+    this.doSaveGameWithCallbacks(this.props.game, (game) => {}, (err) => {});
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -54,7 +60,7 @@ class GameContainer extends React.Component {
 
   render() {
     let game = (this.props.isGameStarting) ?
-      <StartWizard/>
+      <StartWizard cbSaveGame={this.doSaveGameWithCallbacks}/>
       :
       <App/>;
 

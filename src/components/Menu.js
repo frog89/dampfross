@@ -1,8 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { setGameStarting, setStartWizardPage } from '../actions/startWizardActions';
-import { setKonvaDeleteNeeded } from '../actions/konvaActions';
-import { setAutoReload, setReloadGameNeeded, setSaveGameNeeded } from '../actions/gameActions';
+import { setReloadGameNeeded, setSaveGameNeeded } from '../actions/gameActions';
 
 class Menu extends React.Component {
   onReloadClick = (event) => {
@@ -51,10 +49,6 @@ const mapDispatchToProps = (dispatch) => {
   return {
     setReloadGameNeeded: (isNeeded) => { dispatch(setReloadGameNeeded(isNeeded)) },
     setSaveGameNeeded: (isNeeded) => { dispatch(setSaveGameNeeded(isNeeded)) },
-    setStartWizardPage: (page) => { dispatch(setStartWizardPage(page)) },
-    setGameStarting: (isStarting) => { dispatch(setGameStarting(isStarting)) },
-    setAutoReload: (isAutoReload) => { dispatch(setAutoReload(isAutoReload)) },
-    setKonvaDeleteNeeded: (isNeeded) => { dispatch(setKonvaDeleteNeeded(isNeeded)) },
     resetState: () => { dispatch(resetState()) },
   }
 }

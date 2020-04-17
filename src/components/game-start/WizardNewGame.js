@@ -77,16 +77,16 @@ class WizardNewGame extends React.Component {
         this.setState({error: err.response.data.message});
       });
   }
-
+  
   loadBoard = (game) => {
     axios.get(`http://localhost:5000/boards/${game.board}`)
     .then(( response ) => {
       //console.log('loadBoard', game, response.data);
       this.props.setPlayer(game.players[0]);
       this.props.setGameAndBoard(game, response.data);
-      this.props.setGameStarting(false);
       this.props.setAutoReload(true);
       this.props.setKonvaRedrawNeeded(true);
+      this.props.setGameStarting(false);
     })
     .catch(err => console.log(err));
   }

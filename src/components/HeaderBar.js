@@ -1,15 +1,16 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import Dices from './Dices';
 import Menu from './Menu';
 import CurrentPlayerInfo from './CurrentPlayerInfo';
 import GameStatusWaiting from './GameStatusWaiting'
 import ErrorMessage from './ErrorMessage'
+import NextPlayer from './NextPlayer'
 
 import Expand from '../images/expand.png';
 import Collapse from '../images/collapse.png';
 import AutoReload from '../images/auto-reload.png';
 import NoAutoReload from '../images/no-auto-reload.png';
-import { connect } from 'react-redux';
 import * as Constants from '../constants';
 
 import { setAutoReload } from '../actions/gameActions';
@@ -45,12 +46,12 @@ class HeaderBar extends React.Component {
       null;
 
     const autoReloadButton = this.props.isAutoReload ?
-      <a href="/#"><img src={AutoReload} alt="AutoReload" onClick={this.switchAutoReloadOff}/></a> :
-      <a href="/#"><img src={NoAutoReload} alt="NoAutoReload" onClick={this.switchAutoReloadOn}/></a>;
+      <a href="/#"><img src={AutoReload} title="Auto reload enabled" alt="AutoReload" onClick={this.switchAutoReloadOff}/></a> :
+      <a href="/#"><img src={NoAutoReload} title="Auto reload disabled" alt="NoAutoReload" onClick={this.switchAutoReloadOn}/></a>;
 
     const visiButton = this.props.isScoreTableVisible ?
-      <a href="/#"><img src={Collapse} alt="collapse" onClick={this.collapse}/></a> :
-      <a href="/#"><img src={Expand} alt="expand" onClick={this.expand}/></a>;
+      <a href="/#"><img src={Collapse} title="Collapse score table" alt="collapse" onClick={this.collapse}/></a> :
+      <a href="/#"><img src={Expand} title="Expand score table" alt="expand" onClick={this.expand}/></a>;
 
     return (
       <div className="container-fluid bg-dark text-light">
@@ -73,6 +74,14 @@ class HeaderBar extends React.Component {
                 <div className="col-auto align-self-center">
                   <GameStatusWaiting/>
                 </div>
+                :
+                <div className="col-auto align-self-center">
+                  <NextPlayer/>
+                </div>  
+              }
+              {
+                (this.props.game.status === Constants.GAME_STATUS_WAITING_FOR_PLAYERS) ?
+                null
                 :
                 <div className="col-auto align-self-center">
                   <Dices/>

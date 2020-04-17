@@ -18,6 +18,7 @@ const initialState = {
     isSaveGameNeeded: false,
     startWizardPage: 1,
     attendOption: Constants.START_OPTION_NEW_GAME,
+    nextPlayerIndex: 0,
     penColors: [
       { colorValue: 'blue', colorName: 'Blue' },
       { colorValue: 'crimson', colorName: 'Red'},
@@ -85,6 +86,16 @@ const initialState = {
 const rootReducer = (state = initialState, action) => {
   let newDrawLines = null;
   switch(action.type) {
+    case 'SET_NEXT_PLAYER':
+      console.log('SET_NEXT_PLAYER', action.playerIndex);
+      return {
+        ...state,
+        session: {
+          ...state.session,
+          nextPlayerIndex: action.playerIndex,
+        },
+      }
+
     case 'RESET_STATE':
       let newState = {
         ...initialState,
@@ -96,15 +107,15 @@ const rootReducer = (state = initialState, action) => {
       console.log('RESET_STATE', newState);
       return newState;
 
-    case 'SET_GAME_STARTING':
-      console.log('SET_GAME_STARTING', action.isStarting);
-      return {
-        ...state,
-        session: {
-          ...state.session,
-          isGameStarting: action.isStarting,
-        },
-      }
+      case 'SET_GAME_STARTING':
+        console.log('SET_GAME_STARTING', action.isStarting);
+        return {
+          ...state,
+          session: {
+            ...state.session,
+            isGameStarting: action.isStarting,
+          },
+        }
 
     case 'SET_ERROR_MESSAGE':
       console.log('SET_ERROR_MESSAGE', action.message);
