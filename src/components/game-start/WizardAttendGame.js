@@ -23,7 +23,7 @@ class WizardAttendGame extends React.Component {
   }
 
   fetchGameNames = () => {
-    axios.get('http://localhost:5000/games/waiting')
+    axios.get('/games/waiting')
     .then((response) => {
       this.setState({ games: response.data.games });
       this.setState({
@@ -36,7 +36,7 @@ class WizardAttendGame extends React.Component {
   }
 
   loadGame = (gameId) => {
-    axios.get(`http://localhost:5000/games/${gameId}`)
+    axios.get(`/games/${gameId}`)
     .then((response) => {
       let game = response.data;
       // console.log('loadGame', game._id);
@@ -61,7 +61,7 @@ class WizardAttendGame extends React.Component {
   }
 
   loadBoard = (game) => {
-    axios.get(`http://localhost:5000/boards/${game.board}`)
+    axios.get(`/boards/${game.board}`)
     .then(( response ) => {
       let board = response.data;
       let currentPlayer = { 

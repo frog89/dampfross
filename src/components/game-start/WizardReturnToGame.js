@@ -28,7 +28,7 @@ class WizardReturnToGame extends React.Component {
   }
 
   fetchGameNames = () => {
-    axios.get('http://localhost:5000/games')
+    axios.get('/games')
       .then((response) => {
         this.setState({ gameNames: response.data.games });
         this.setState({ gamePassword: 'xy' });
@@ -45,7 +45,7 @@ class WizardReturnToGame extends React.Component {
 
   loadGame = (gameId) => {
     this.setState({ error: null });
-    axios.get(`http://localhost:5000/games/${gameId}`)
+    axios.get(`/games/${gameId}`)
     .then((response) => {
       let game = response.data;
       console.log('loadGame-scoreTable rows:', game.scoreTable.rows.length);
@@ -58,7 +58,7 @@ class WizardReturnToGame extends React.Component {
   }
 
   loadBoard = (game) => {
-    axios.get(`http://localhost:5000/boards/${game.board}`)
+    axios.get(`/boards/${game.board}`)
     .then(( response ) => {
       let board = response.data;
       let playerNames = game.players.map(g => g.name);

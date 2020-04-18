@@ -29,7 +29,7 @@ export const setGame = (game) => {
 } 
 
 export const saveGame = (game, successCallback, errorCallback) => {
-  axios.patch(`http://localhost:5000/games/${game._id}`, game)
+  axios.patch(`/games/${game._id}`, game)
     .then((response) => {
       let game = response.data;
       successCallback(game);
@@ -61,7 +61,7 @@ export const reloadGame = (gameId, successCallback, errorCallback) => {
     return;
   }
   // console.log('reloadGame:', gameId);
-  axios.get(`http://localhost:5000/games/${gameId}`)
+  axios.get(`/games/${gameId}`)
     .then((response) => {
       let game = response.data;
       successCallback(game);

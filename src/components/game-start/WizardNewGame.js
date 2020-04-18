@@ -26,7 +26,7 @@ class WizardNewGame extends React.Component {
   }
 
   fetchBoardNames = () => {
-    axios.get('http://localhost:5000/boards')
+    axios.get('/boards')
       .then(( { data } ) => {
         this.setState({ boards: data.boards });
         this.setState({
@@ -67,7 +67,7 @@ class WizardNewGame extends React.Component {
       board: this.state.boardId,
     };
 
-    axios.post('http://localhost:5000/games', game)
+    axios.post('/games', game)
       .then((response) => {
         //console.log('create-new-success', response.data);
         this.loadBoard(response.data);
@@ -79,7 +79,7 @@ class WizardNewGame extends React.Component {
   }
   
   loadBoard = (game) => {
-    axios.get(`http://localhost:5000/boards/${game.board}`)
+    axios.get(`/boards/${game.board}`)
     .then(( response ) => {
       //console.log('loadBoard', game, response.data);
       this.props.setPlayer(game.players[0]);
@@ -222,18 +222,18 @@ const setPlayer = (player) => {
   }
 }
 
-export const fetchUsers = () => {
-  return (dispatch) => {
-    axios.get('https://jsonplaceholder.typicode.com/users')
-      .then(( { data} ) => {
-        dispatch({
-          type: 'FETCH_USERS',
-          payload: data
-        })
+// export const fetchUsers = () => {
+//   return (dispatch) => {
+//     axios.get('https://jsonplaceholder.typicode.com/users')
+//       .then(( { data} ) => {
+//         dispatch({
+//           type: 'FETCH_USERS',
+//           payload: data
+//         })
 
-      })
-  }
-}
+//       })
+//   }
+// }
 
 const setGameAndBoard = (game, board) => {
   return {
