@@ -4,9 +4,10 @@ import GameContainer from './components/GameContainer';
 
 import { Provider } from 'react-redux';
 import store from './store';
-import Axios from 'axios';
+import axios from 'axios';
 
-Axios.defaults.baseURL = "http://localhost:5000";
+console.log('Set axios.defaults.baseURL to', process.env.DAMPFROSS_API_URL);
+axios.defaults.baseURL = process.env.DAMPFROSS_API_URL;
 
 ReactDOM.render(
   <Provider store={store}>
