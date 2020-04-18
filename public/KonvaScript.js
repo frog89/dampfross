@@ -284,13 +284,13 @@ function getTargetComb(x, y, direction) {
 
 function addCombLine(layer, x, y, combLine, lineData) {
   let startCombXY = {x, y};
-  console.log('addCombLine', startCombXY);
+  // console.log('addCombLine', startCombXY);
 
   let startCombMiddle = getCombMiddle(startCombXY.x, startCombXY.y);
   let linePoints = [startCombMiddle.x, startCombMiddle.y];
   for (let i = 0; i < lineData.length; i++) {
     let targetCombXY = getTargetComb(startCombXY.x, startCombXY.y, lineData[i]);
-    console.log('addCombLine-loop', i, lineData[i], targetCombXY);
+    // console.log('addCombLine-loop', i, lineData[i], targetCombXY);
 
     let targetCombMiddle = getCombMiddle(targetCombXY.x, targetCombXY.y);
     linePoints.push(targetCombMiddle.x);
