@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
-import { getColumnsForPlayers } from '../actions/scoreTableActions';
+import { getColumnsForPlayers, setResetScoreTableColumns } from '../actions/scoreTableActions';
 import { setSaveGameNeeded } from '../actions/gameActions';
 
 class ScoreTable extends React.Component {
@@ -40,10 +40,14 @@ class ScoreTable extends React.Component {
   }
 
   resetColumns() {
-    if (this.state.columns.length === this.props.players.length + 1) {
+    let resetNeeded = this.props.isResetScoreTableColumnsNeeded || 
+      this.state.columns.length !== this.props.players.length + 1
+    if (!resetNeeded) {
       return;
     }
-    
+
+    this.props.setResetScoreTableColumns(false);
+
     let cols = getColumnsForPlayers(this.props.players, this.setValueChanged);
     this.setState({ columns: cols });
   }
@@ -53,7 +57,6 @@ class ScoreTable extends React.Component {
     this.gridOptions.columnApi = params.columnApi;
 
     this.gridOptions.api.setColumnDefs(this.state.columns);
-    this.gridOptions.api.setRowData(this.props.rows);
     this.gridOptions.api.sizeColumnsToFit();
     this.setRows(this.props.rows);
   }
@@ -83,6 +86,7 @@ class ScoreTable extends React.Component {
   }
 
   render() {
+    this.gridOptions.api && this.gridOptions.api.sizeColumnsToFit();
     let agGridOptions = {
       getRowNodeId: function(row) {
         return row.no;
@@ -136,6 +140,7 @@ const mapStateToProps = (state) => {
   return {
     players: state.game.players,
     isScoreTableVisible: state.session.isScoreTableVisible,
+    isResetScoreTableColumnsNeeded: state.session.isResetScoreTableColumnsNeeded,
     rows: state.game.scoreTable.rows,
     gameStatus: state.game.status,
   }
@@ -145,6 +150,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     setScoreTableRows: rows => { dispatch(setScoreTableRows(rows)) },
     setSaveGameNeeded: isNeeded => { dispatch(setSaveGameNeeded(isNeeded)) },
+    setResetScoreTableColumns: isNeeded => { dispatch(setResetScoreTableColumns(isNeeded)) },
   }
 }
 

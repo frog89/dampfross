@@ -76,7 +76,7 @@ class HeaderBar extends React.Component {
                 </div>
                 :
                 <div className="col-auto align-self-center">
-                  <NextPlayer/>
+                  <NextPlayer cbSaveGame={this.props.cbSaveGame}/>
                 </div>  
               }
               {
@@ -93,7 +93,7 @@ class HeaderBar extends React.Component {
             <div style={{ textAlign: 'right'}}>
               <div className="row justify-content-end">
                 <div className="col-auto align-self-center">
-                  <Menu/>
+                  <Menu cbSaveGame={this.props.cbSaveGame}/>
                 </div>
                 <div className="col-auto align-self-center">
                   <CurrentPlayerInfo player={this.props.player}/>

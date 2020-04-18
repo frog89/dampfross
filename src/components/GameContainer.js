@@ -12,7 +12,7 @@ import store from '../store';
 class GameContainer extends React.Component {
   doReloadGame = () => {
     const cbSuccess = (newGame) => {
-      // console.log('onReloadClick', newGame);
+      console.log('doReloadGame-success', newGame);
       this.props.setGame(newGame);
       this.props.setKonvaRedrawNeeded(true);  
     }
@@ -62,7 +62,7 @@ class GameContainer extends React.Component {
     let game = (this.props.isGameStarting) ?
       <StartWizard cbSaveGame={this.doSaveGameWithCallbacks}/>
       :
-      <App/>;
+      <App cbSaveGame={this.doSaveGameWithCallbacks}/>;
 
     return (
       <Provider store={store}>

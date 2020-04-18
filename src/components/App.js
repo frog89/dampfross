@@ -27,7 +27,7 @@ class App extends React.Component {
         <div className="container-fluid h-100" style={{ background: 'lightgrey' }}>
           <div className="row">
             <div className="col">
-              <HeaderBar />
+              <HeaderBar cbSaveGame={this.props.cbSaveGame}/>
             </div>
           </div>
           {bodyPart}

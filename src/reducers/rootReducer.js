@@ -16,9 +16,9 @@ const initialState = {
     isKonvaDeleteNeeded: false,
     isReloadGameNeeded: false,
     isSaveGameNeeded: false,
+    isResetScoreTableColumnsNeeded: false,
     startWizardPage: 1,
     attendOption: Constants.START_OPTION_NEW_GAME,
-    nextPlayerIndex: 0,
     penColors: [
       { colorValue: 'blue', colorName: 'Blue' },
       { colorValue: 'crimson', colorName: 'Red'},
@@ -32,6 +32,7 @@ const initialState = {
   },
   game: {
     _id: null,
+    nextPlayerIndex: 0,
     players: [
       { id: 'fa', name: 'Frank', penColor: 'orange' },
       { id: 'ow', name: 'Othmar', penColor: 'pink' },
@@ -86,13 +87,13 @@ const initialState = {
 const rootReducer = (state = initialState, action) => {
   let newDrawLines = null;
   switch(action.type) {
-    case 'SET_NEXT_PLAYER':
-      console.log('SET_NEXT_PLAYER', action.playerIndex);
+    case 'SET_RESET_SCORETABLE_COLUMNS':
+      console.log('SET_RESET_SCORETABLE_COLUMNS', action.isNeeded);
       return {
         ...state,
         session: {
           ...state.session,
-          nextPlayerIndex: action.playerIndex,
+          isResetScoreTableColumnsNeeded: action.isNeeded,
         },
       }
 

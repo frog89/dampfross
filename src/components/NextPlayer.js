@@ -2,19 +2,28 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import NextPlayerImg from '../images/next-player.png';
-import { setSaveGameNeeded } from '../actions/gameActions';
+import { setGame } from '../actions/gameActions';
 
 import './NextPlayer.css';
 
 class NextPlayer extends React.Component {
   onNextPlayerClicked = (event) => {
     let players = this.props.game.players;
-    let next = this.props.nextPlayerIndex + 1;
+    let next = this.props.game.nextPlayerIndex + 1;
     if (next > players.length - 1) {
       next = 0;
     }
-    this.props.setNextPlayer(next);
-    this.props.setSaveGameNeeded(true);
+    console.log('onNextPlayerClicked-next:', next);
+    let game = {...this.props.game}
+    game.nextPlayerIndex = next;
+    this.saveGame(game);
+  }
+
+  saveGame = (game) => {
+    this.props.cbSaveGame(game, 
+      (game) => {
+        this.props.setGame(game);
+      }, (err) => {});
   }
 
   render() {
@@ -24,7 +33,7 @@ class NextPlayer extends React.Component {
         onClick={this.onNextPlayerClicked}/></a>;
 
     let players = this.props.game.players;
-    let playerIndex = this.props.nextPlayerIndex;
+    let playerIndex = this.props.game.nextPlayerIndex;
     let playerName = players[playerIndex].name;
     return (
       <div className="row justify-content-start">
@@ -39,24 +48,15 @@ class NextPlayer extends React.Component {
   }
 }
 
-const setNextPlayer = (playerIndex) => {
-  return {
-    type: 'SET_NEXT_PLAYER',
-    playerIndex
-  }
-} 
-
 const mapStateToProps = (state) => {
   return {
-    nextPlayerIndex: state.session.nextPlayerIndex,
     game: state.game,
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setNextPlayer: playerIndex => { dispatch(setNextPlayer(playerIndex)) },
-    setSaveGameNeeded: isNeeded => { dispatch(setSaveGameNeeded(isNeeded)) },
+    setGame: game => { dispatch(setGame(game)) },
   }
 }
 

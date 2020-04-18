@@ -1,3 +1,10 @@
+export const setResetScoreTableColumns = (isNeeded) => {
+  return {
+    type: 'SET_RESET_SCORETABLE_COLUMNS',
+    isNeeded
+  }
+} 
+
 export const getFirstRow = (players) => {
   let userColumns = getUserColumnsForPlayers(players);
   let firstRow = {no: 1};
@@ -34,5 +41,6 @@ export const getUserColumnsForPlayers = (players, cbSetValue) => {
       editable: true
     });
   });
+  console.log('getUserColumnsForPlayers:', players, userColumns);
   return userColumns;
 }
