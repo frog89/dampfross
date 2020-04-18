@@ -37,10 +37,10 @@ class NextPlayer extends React.Component {
     let playerName = players[playerIndex].name;
     return (
       <div className="row justify-content-start">
-        <div className="col-auto align-self-center">
+        <div className="col-auto align-self-center p-0 ml-2 mr-1 mt-0 mb-0">
           <p className="next_player_text">Current Player:<br/>{playerName}</p>
         </div>
-        <div className="col-auto align-self-center">
+        <div className="col-auto align-self-center p-0 m-0">
           {nextPlayerButton}
         </div>
       </div>

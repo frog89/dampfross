@@ -1,16 +1,16 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { setGame, setReloadGameNeeded, setSaveGameNeeded } from '../actions/gameActions';
+import { setGame, setAutoReload } from '../actions/gameActions';
 import { setResetScoreTableColumns } from '../actions/scoreTableActions';
 
 class Menu extends React.Component {
-  onReloadClick = (event) => {
-    this.props.setReloadGameNeeded(true);
+  onAutoReloadOffClick = (event) => {
+    this.props.setAutoReload(false);
   }
 
-  onSaveClick = (event) => {
-    this.props.setSaveGameNeeded(true);
-  }
+  // onSaveClick = (event) => {
+  //   this.props.setSaveGameNeeded(true);
+  // }
 
   getMixedNumbers(nums) {
     let numsMixed = [];
@@ -66,7 +66,7 @@ class Menu extends React.Component {
         </button>
         <div className="dropdown-menu">
           {/* <a className="dropdown-item" href="/#" onClick={this.onSaveClick}>Save Game...</a> */}
-          <a className="dropdown-item" href="/#" onClick={this.onReloadClick}>Reload Game</a>
+          <a className="dropdown-item" href="/#" onClick={this.onAutoReloadOffClick}>Auto Reload Off</a>
           <a className="dropdown-item" href="/#" onClick={this.onMixPlayersClick}>Mix Players</a>
           <a className="dropdown-item" href="/#" onClick={this.onLeaveClick}>Leave Game</a>
         </div>
@@ -89,8 +89,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setReloadGameNeeded: isNeeded => { dispatch(setReloadGameNeeded(isNeeded)) },
-    setSaveGameNeeded: isNeeded => { dispatch(setSaveGameNeeded(isNeeded)) },
+    setAutoReload: isAutoReload => { dispatch(setAutoReload(isAutoReload)) },
+    // setSaveGameNeeded: isNeeded => { dispatch(setSaveGameNeeded(isNeeded)) },
     resetState: () => { dispatch(resetState()) },
     setGame: (game) => { dispatch(setGame(game)) },
     setResetScoreTableColumns: isNeeded => { dispatch(setResetScoreTableColumns(isNeeded)) },

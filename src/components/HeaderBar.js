@@ -13,7 +13,7 @@ import AutoReload from '../images/auto-reload.png';
 import NoAutoReload from '../images/no-auto-reload.png';
 import * as Constants from '../constants';
 
-import { setAutoReload } from '../actions/gameActions';
+import { setAutoReload, setReloadGameNeeded } from '../actions/gameActions';
 
 import './HeaderBar.css';
 
@@ -29,12 +29,13 @@ class HeaderBar extends React.Component {
     this.props.setScoreTableVisibility(true);
   }
 
-  switchAutoReloadOn = () => {
+  onNoAutoReloadClick = () => {
     this.props.setAutoReload(true);
+    this.props.setReloadGameNeeded(true);
   }
 
-  switchAutoReloadOff = () => {
-    this.props.setAutoReload(false);
+  onAutoReloadClick = () => {
+    this.props.setReloadGameNeeded(true);
   }
 
   render() {
@@ -46,8 +47,8 @@ class HeaderBar extends React.Component {
       null;
 
     const autoReloadButton = this.props.isAutoReload ?
-      <a href="/#"><img src={AutoReload} title="Auto reload enabled" alt="AutoReload" onClick={this.switchAutoReloadOff}/></a> :
-      <a href="/#"><img src={NoAutoReload} title="Auto reload disabled" alt="NoAutoReload" onClick={this.switchAutoReloadOn}/></a>;
+      <a href="/#"><img src={AutoReload} title="Auto reload enabled" alt="AutoReload" onClick={this.onAutoReloadClick}/></a> :
+      <a href="/#"><img src={NoAutoReload} title="Auto reload disabled" alt="NoAutoReload" onClick={this.onNoAutoReloadClick}/></a>;
 
     const visiButton = this.props.isScoreTableVisible ?
       <a href="/#"><img src={Collapse} title="Collapse score table" alt="collapse" onClick={this.collapse}/></a> :
@@ -130,8 +131,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setScoreTableVisibility: (isVisible) => { dispatch(setScoreTableVisibility(isVisible)) },
-    setAutoReload: (isAutoReload) => { dispatch(setAutoReload(isAutoReload)) },
+    setScoreTableVisibility: isVisible => { dispatch(setScoreTableVisibility(isVisible)) },
+    setAutoReload: isAutoReload => { dispatch(setAutoReload(isAutoReload)) },
+    setReloadGameNeeded: isNeeded => { dispatch(setReloadGameNeeded(isNeeded)) },
   }
 }
 
