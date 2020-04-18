@@ -7,6 +7,9 @@ const TEXTOBJ_BIG = 18;
 const TEXTOBJ_MIDDLE = 19;
 const TEXTOBJ_SMALL = 20;
 
+const COMBLINE_BLACK_DASHED = 1;
+const COMBLINE_BLACK_SOLID = 2;
+
 const COMB_RADIUS = 23;
 const combDiffX = COMB_RADIUS * Math.cos(30.0 * Math.PI / 180.0);
 const combDiffY = COMB_RADIUS * 0.5;
@@ -245,6 +248,79 @@ function addTextObject(layer, x, y, textObject, text) {
   layer.add(konvaText);
 }
 
+function getTargetComb(x, y, direction) {
+  let kind = 'odd';
+  if (y % 2 == 0)
+    kind = 'even';
+
+  let diffX = 0;
+  let diffY = 0;
+  if (direction === 1 || direction === 6) {
+    diffY = -1;
+  } else if (direction === 2 || direction === 5) {
+    diffY = 0;
+  } else if (direction === 3 || direction === 4) {
+    diffY = 1;
+  }
+  if (kind === 'even') {
+    if (direction === 5) {
+      diffX = -1;
+    } else if (direction === 4 || direction === 6) {
+      diffX = 0;
+    } else if (direction === 1 || direction === 2 || direction === 3) {
+      diffX = 1;
+    }  
+  } else if (kind === 'odd') {
+    if (direction === 4 || direction === 5 || direction === 6) {
+      diffX = -1;
+    } else if (direction === 1 || direction === 3) {
+      diffX = 0;
+    } else if (direction === 2) {
+      diffX = 1;
+    }  
+  }
+  return { x: x + diffX, y: y + diffY };
+}
+
+function addCombLine(layer, x, y, combLine, lineData) {
+  let startCombXY = {x, y};
+  console.log('addCombLine', startCombXY);
+
+  let startCombMiddle = getCombMiddle(startCombXY.x, startCombXY.y);
+  let linePoints = [startCombMiddle.x, startCombMiddle.y];
+  for (let i = 0; i < lineData.length; i++) {
+    let targetCombXY = getTargetComb(startCombXY.x, startCombXY.y, lineData[i]);
+    console.log('addCombLine-loop', i, lineData[i], targetCombXY);
+
+    let targetCombMiddle = getCombMiddle(targetCombXY.x, targetCombXY.y);
+    linePoints.push(targetCombMiddle.x);
+    linePoints.push(targetCombMiddle.y);
+
+    startCombXY = {x: targetCombXY.x, y: targetCombXY.y};
+  }
+
+  let color = null;
+  let dashEnabled = false;
+  if (combLine === COMBLINE_BLACK_DASHED) {
+    color = 'black';
+    dashEnabled = true;
+  } else if (combLine === COMBLINE_BLACK_SOLID) {
+    color = 'black';
+    dashEnabled = false;
+  }
+
+  let line = new Konva.Line({
+    x: 0,
+    y: 0,
+    points: linePoints,
+    stroke: color,
+    strokeWidth: 5,
+    dashEnabled,  
+    dash: [10, 5],
+  });
+  layer.add(line);
+}
+
 function addBorder(layer, x, y, border) {
   let linePoints = getBorderLinePoints(border, x, y);
   if (linePoints.length > 0) {
@@ -298,7 +374,7 @@ function deleteElements() {
 
 function drawElements(session, board, game, setPuppet, 
     addDrawLine, removeDrawLine) {  
-  ({ width, height, combs, borders, rivers, townTexts, textObjects } = board);
+  ({ width, height, combs, borders, rivers, townTexts, textObjects, combLines } = board);
   konvaState.session = session;
   konvaState.game = game;
   konvaState.board = board;
@@ -347,6 +423,7 @@ function drawElements(session, board, game, setPuppet,
 
   let townTextIdx = 0;
   let textIdx = 0;
+  let combLineIdx = 0;
   for (let kind = 0; kind < 3; kind++) {
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
@@ -373,6 +450,12 @@ function drawElements(session, board, game, setPuppet,
           if (textObject > 0) {
             addTextObject(mapLayer, x, y, textObject, textObjects.texts[textIdx]);
             textIdx++;  
+          }
+
+          let combLine = combLines.data[idx] - combLines.offset;
+          if (combLine > 0) {
+            addCombLine(mapLayer, x, y, combLine, combLines.lineData[combLineIdx]);
+            combLineIdx++;
           }
         }  
       }
