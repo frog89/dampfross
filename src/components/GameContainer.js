@@ -12,7 +12,8 @@ import store from '../store';
 class GameContainer extends React.Component {
   doReloadGame = () => {
     const cbSuccess = (newGame) => {
-      console.log('doReloadGame-success', newGame);
+      this.props.setErrorMessage(null);
+      // console.log('doReloadGame-success', newGame);
       this.props.setGame(newGame);
       this.props.setKonvaRedrawNeeded(true);  
     }
@@ -34,7 +35,8 @@ class GameContainer extends React.Component {
 
   doSaveGameWithCallbacks = (game, cbSuccess, cbError) => {
     saveGame(game, (newGame) => {
-      console.log('Game saved');
+      this.props.setErrorMessage(null);
+      // console.log('Game saved');
       cbSuccess(newGame);
     }, (err) => {
       console.log(err);

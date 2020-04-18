@@ -66,7 +66,10 @@ class Menu extends React.Component {
         </button>
         <div className="dropdown-menu">
           {/* <a className="dropdown-item" href="/#" onClick={this.onSaveClick}>Save Game...</a> */}
-          <a className="dropdown-item" href={`/maps/${this.props.board.mapPicture}`} target="_blank">Show Map</a>
+          <a className="dropdown-item" 
+            href={`/maps/${this.props.board.mapPicture}`} 
+            rel="noopener noreferrer"
+            target="_blank">Show Map</a>
           <a className="dropdown-item" href="/#" onClick={this.onAutoReloadOffClick}>Auto Reload Off</a>
           <a className="dropdown-item" href="/#" onClick={this.onMixPlayersClick}>Mix Players</a>
           <a className="dropdown-item" href="/#" onClick={this.onLeaveClick}>Leave Game</a>

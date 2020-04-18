@@ -36,13 +36,9 @@ class StartWizard extends React.Component {
             </div>
           </div>
           <div className="row justify-content-center">
-            <div className="col-6 text-center" style={{background: 'yellow'}}>
-              <img src={StartBackgroundPic} alt="start-bg" className="image"/>
-              <div className="row h-100 justify-content-center wizard">
-                <div className="col-8">
-                  {wizardPage}
-                </div>
-              </div>
+            <img src={StartBackgroundPic} alt="start-bg" className="image"/>
+            <div className="col-sm-10 col-md-10 col-lg-7 col-lg-7 col-xl-6 align-self-center wizard">
+              {wizardPage}
             </div>
           </div>          
         </div>

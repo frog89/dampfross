@@ -1,14 +1,14 @@
 .image {
   position: relative;
-  top: 10px;
-  /* width: 800px; */
+  padding: 15px;
+  width: 100%;
   /* object-fit: cover; */
-  height: 800px;
+  height: 100%;
 }
 
 .wizard {
-  position: relative;
-  top: -700px;
+  position: absolute;
+  top: 200px;
 }
 
 
