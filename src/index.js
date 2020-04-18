@@ -6,8 +6,8 @@ import { Provider } from 'react-redux';
 import store from './store';
 import axios from 'axios';
 
-console.log('Set axios.defaults.baseURL to', process.env.DAMPFROSS_API_URL);
-axios.defaults.baseURL = process.env.DAMPFROSS_API_URL;
+console.log('Set axios.defaults.baseURL to', process.env.REACT_APP_DAMPFROSS_API_URL);
+axios.defaults.baseURL = process.env.REACT_APP_DAMPFROSS_API_URL;
 
 ReactDOM.render(
   <Provider store={store}>
