@@ -152,6 +152,7 @@ function addComb(layer, x, y, comb) {
     strokeWidth: 1
   });
   layer.add(polygon);
+  polygon.cache();
 }
 
 function addInsideTownText(layer, x, y, townText) {

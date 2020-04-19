@@ -29,13 +29,13 @@ class WizardNewGame extends React.Component {
     axios.get('/boards')
       .then(( { data } ) => {
         this.setState({ boards: data.boards });
-        this.setState({
-          playerName: "Frank",
-          gameName: "oesi",
-          gamePassword: "xy",
-          penColor: "darkorange",
-          boardId: "5e95793a033c5c0f382b39ea"
-        });
+        // this.setState({
+        //   playerName: "Frank",
+        //   gameName: "oesi",
+        //   gamePassword: "xy",
+        //   penColor: "darkorange",
+        //   boardId: "5e95793a033c5c0f382b39ea"
+        // });
       })
       .catch(err => console.log(err));
   }
@@ -221,19 +221,6 @@ const setPlayer = (player) => {
     player: player,
   }
 }
-
-// export const fetchUsers = () => {
-//   return (dispatch) => {
-//     axios.get('https://jsonplaceholder.typicode.com/users')
-//       .then(( { data} ) => {
-//         dispatch({
-//           type: 'FETCH_USERS',
-//           payload: data
-//         })
-
-//       })
-//   }
-// }
 
 const setGameAndBoard = (game, board) => {
   return {

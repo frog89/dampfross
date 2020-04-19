@@ -26,11 +26,11 @@ class WizardAttendGame extends React.Component {
     axios.get('/games/waiting')
     .then((response) => {
       this.setState({ games: response.data.games });
-      this.setState({
-        playerName: "Stephan",
-        gamePassword: "xy",
-        penColor: "darkgreen",
-      });
+      // this.setState({
+      //   playerName: "Stephan",
+      //   gamePassword: "xy",
+      //   penColor: "darkgreen",
+      // });
     })
     .catch(err => console.log(err));
   }

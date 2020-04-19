@@ -135,7 +135,7 @@ function drawTempLine(layer, startComb, comb) {
     strokeWidth: 3,
   });
   layer.add(line);
-  layer.draw();
+  layer.batchDraw();
   return line;
 }
 
