@@ -3,7 +3,7 @@ const NAME_START_DRAWLINE = "line-draw";
 const NAME_TEMPLINE = "line-temp";
 
 function onLayerMouseClick(layer, event) {
-  //console.log('onLayerMouseClick', event);
+  // console.log('onLayerMouseClick', event.evt.button);
   
   if (event.evt.button !== 0) {
      cancelDraw(layer);
@@ -159,9 +159,10 @@ function drawLine(layer, mongoId, player, linePoints) {
     strokeWidth: 3,
   });
   line.on('click', (event) => {
-    let lineShape = event.target;
+    // console.log('event:', event);
 
-    if (event.evt.ctrlKey) {
+    if (event.evt.button == 2 && event.evt.ctrlKey) {
+      let lineShape = event.target;
       konvaState.removeDrawLine(lineShape.attrs.mongoId);
       lineShape.destroy();
       layer.draw();
