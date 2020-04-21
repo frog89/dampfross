@@ -9,6 +9,8 @@ const TEXTOBJ_SMALL = 20;
 
 const COMBLINE_BLACK_DASHED = 1;
 const COMBLINE_BLACK_SOLID = 2;
+const COMBLINE_WHITE_DASHED = 3;
+const COMBLINE_WHITE_SOLID = 4;
 
 const COMB_RADIUS = 23;
 const combDiffX = COMB_RADIUS * Math.cos(30.0 * Math.PI / 180.0);
@@ -62,7 +64,7 @@ function getCombColor(comb) {
   } else if (comb===COMB_TOWN) {
     return 'yellow';
   } else if (comb===COMB_WATER) {
-    return 'blue';
+    return '#339CFF';
   }
   return 'white';
 }
@@ -302,12 +304,24 @@ function addCombLine(layer, x, y, combLine, lineData) {
 
   let color = null;
   let dashEnabled = false;
+  let opacity = 1.0;
+  // console.log('combLine', combLine);
   if (combLine === COMBLINE_BLACK_DASHED) {
     color = 'black';
     dashEnabled = true;
+    opacity = 0.7;
   } else if (combLine === COMBLINE_BLACK_SOLID) {
     color = 'black';
     dashEnabled = false;
+    opacity = 0.7;
+  } else if (combLine === COMBLINE_WHITE_DASHED) {
+    color = 'white';
+    dashEnabled = true;
+    opacity = 0.5;
+  } else if (combLine === COMBLINE_WHITE_SOLID) {
+    color = 'white';
+    dashEnabled = false;
+    opacity = 0.5;
   }
 
   let line = new Konva.Line({
@@ -315,6 +329,7 @@ function addCombLine(layer, x, y, combLine, lineData) {
     y: 0,
     points: linePoints,
     stroke: color,
+    opacity,
     strokeWidth: 5,
     dashEnabled,  
     dash: [10, 5],
