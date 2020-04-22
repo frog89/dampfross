@@ -20,6 +20,13 @@ const combDiffY = COMB_RADIUS * 0.5;
 // so scrolling will look smoother
 const PADDING = 800;
 
+function getBoardDimensionInPixel() {
+  return {
+    x: window.innerWidth + PADDING,
+    y: window.innerHeight + PADDING
+  };
+}
+
 function cloneDefaultStage(){
   let konvaStateDefault = {
     session: null,
@@ -373,10 +380,11 @@ function repositionStage(scrollContainer) {
 }
 
 function initStage(width, height) {
+  let boardDim = getBoardDimensionInPixel();
   let stage = new Konva.Stage({
     container: 'konvaContainer',
-    width: window.innerWidth + PADDING * 2,
-    height: window.innerHeight + PADDING * 2
+    width: boardDim.x,
+    height: boardDim.y
   });
   konvaState.stage = stage;
 }

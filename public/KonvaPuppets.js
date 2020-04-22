@@ -75,6 +75,14 @@ function initDragDrop(puppetLayer, dragLayer) {
       shadowOffsetX: 3,
       shadowOffsetY: 3
     });
+    let diff = 10;
+    let middle = getCombMiddle(konvaState.board.width, konvaState.board.height);
+    let x = Math.max(diff, puppet.attrs.x);
+    x = Math.min(middle.x + COMB_RADIUS - diff, x);
+    let y = Math.max(diff, puppet.attrs.y);
+    y = Math.min(middle.y + COMB_RADIUS - diff, y);
+    puppet.position({x, y});
+
     let puppetCfg = {x: puppet.attrs.x, y: puppet.attrs.y, playerId: puppet.attrs.name };
     //console.log('dragend-puppet:', puppetCfg);
     konvaState.setPuppet(puppetCfg);
