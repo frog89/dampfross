@@ -265,7 +265,6 @@ const rootReducer = (state = initialState, action) => {
         ...state,
         session: {
           ...state.session,
-          isKonvaRedrawNeeded: true
         },
         game: {
           ...state.game,
