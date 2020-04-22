@@ -3,7 +3,8 @@ const NAME_START_DRAWLINE = "line-draw";
 const NAME_TEMPLINE = "line-temp";
 
 function onLayerMouseClick(layer, event) {
-  //console.log('onLayerMouseClick', event.evt.button);
+  // console.log('onLayerMouseClick', event.evt);
+  let mousePosOnLayer = {x: event.evt.layerX, y: event.evt.layerY };
   
   if (event.evt.button !== 0) {
      cancelDraw(layer);
@@ -16,7 +17,7 @@ function onLayerMouseClick(layer, event) {
     if (konvaState.drawStartComb) {
       let player = konvaState.session.player;
       let lineShape = drawLineForCombs(layer, mongoose.Types.ObjectId(), 
-        player, konvaState.drawStartComb, comb);
+        player, konvaState.drawStartComb, mousePosOnLayer);
       let playerId = player._id.toString();
       //console.log('onLayerMouseClick-drawLine:', line, playerId);
       konvaState.addDrawLine({ 
@@ -25,7 +26,7 @@ function onLayerMouseClick(layer, event) {
         playerId 
       });
     }
-    konvaState.drawStartComb = comb;
+    konvaState.drawStartComb = mousePosOnLayer;
   }
 }
 
@@ -161,12 +162,12 @@ function drawLine(layer, mongoId, player, linePoints) {
   line.on('dblclick', (event) => {
     // console.log('event:', event);
 
-    if (event.evt.ctrlKey) {
+    // if (event.evt.ctrlKey) {
       let lineShape = event.target;
       konvaState.removeDrawLine(lineShape.attrs.mongoId);
       lineShape.destroy();
       layer.draw();
-    }
+    // }
   });  
   layer.add(line);
   layer.draw();
