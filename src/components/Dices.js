@@ -82,12 +82,18 @@ class Dices extends React.Component {
     }, 1000);
   }
 
+  isCurrentPlayerEqualLoginPlayer = () => {
+    return this.props.players[this.props.nextPlayerIndex]._id === this.props.loginPlayer._id;
+  }
+
   render() {
-    const wuerfelButton = <button type="button" 
-          className="btn btn-primary pt-1 pb-1" 
-          onClick={this.dice}>
+    let wuerfelButtonDisabledStyle = this.isCurrentPlayerEqualLoginPlayer() ? '' : 'disabled';
+    const wuerfelButton = 
+      <a href="/#" className={`btn btn-primary pt-1 pb-1 ${wuerfelButtonDisabledStyle}`}
+            onClick={this.dice}
+          >
         Würfeln
-      </button>;
+      </a>;
 
     const animatedDice = (this.state.showAnimatedDices) ?
       <img src={AnimatedDice} className="aniDice pl-3" alt="dice" />
@@ -124,7 +130,10 @@ const setDices = (redA, whiteA, redB, whiteB) => {
 
 const mapStateToProps = (state) => {
   return {
-    dices: state.game.dices
+    dices: state.game.dices,
+    loginPlayer: state.session.player,
+    players: state.game.players,
+    nextPlayerIndex: state.game.nextPlayerIndex,
   }
 }
 

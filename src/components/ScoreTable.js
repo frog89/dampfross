@@ -85,6 +85,11 @@ class ScoreTable extends React.Component {
     this.props.setSaveGameNeeded(true);
   }
 
+  isCurrentPlayerEqualLoginPlayer = () => {
+    // console.log('isCurrentPlayerEqualLoginPlayer', this.props.loginPlayer, this.props.players[this.props.nextPlayerIndex]);
+    return this.props.players[this.props.nextPlayerIndex]._id === this.props.loginPlayer._id;
+  }
+
   render() {
     this.gridOptions.api && this.gridOptions.api.sizeColumnsToFit();
     let agGridOptions = {
@@ -92,7 +97,9 @@ class ScoreTable extends React.Component {
         return row.no;
       },
     }
+    let buttonsDisabledStyle = this.isCurrentPlayerEqualLoginPlayer() ? '' : 'disabled';
     return (
+  
       <div className="container-fluid" 
           style={{
             marginTop: '10px',
@@ -105,8 +112,16 @@ class ScoreTable extends React.Component {
           }}
         >
           <div className="col align-self-center p-0">
-            <button className="btn btn-primary btn-sm p-1 m-1" onClick={this.addRow}>Add row</button>
-            <button className="btn btn-primary btn-sm p-1 m-1" onClick={this.delRow}>Del last row</button>
+            <a href="/#" className={`btn btn-primary btn-sm p-1 m-1 ${buttonsDisabledStyle}`}
+              onClick={this.addRow}
+            >
+              Add row
+            </a>
+            <a href="/#" className={`btn btn-primary btn-sm p-1 m-1 ${buttonsDisabledStyle}`}
+              onClick={this.delRow}
+            >
+              Del last row
+            </a>
           </div>
         </div>
         <div className="row"
@@ -143,6 +158,8 @@ const mapStateToProps = (state) => {
     isResetScoreTableColumnsNeeded: state.session.isResetScoreTableColumnsNeeded,
     rows: state.game.scoreTable.rows,
     gameStatus: state.game.status,
+    loginPlayer: state.session.player,
+    nextPlayerIndex: state.game.nextPlayerIndex,
   }
 }
 
