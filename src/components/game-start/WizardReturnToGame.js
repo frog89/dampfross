@@ -31,14 +31,14 @@ class WizardReturnToGame extends React.Component {
     axios.get('/games')
       .then((response) => {
         this.setState({ gameNames: response.data.games });
-        // this.setState({ gamePassword: 'xy' });
+        this.setState({ gamePassword: 'denni' });
       })
       .catch(err => console.log(err));
   }
 
   onSelectedGameChange = (event) => {
     let gameId = event.target.value;
-    console.log('onSelectedGameChange:', gameId);
+    //console.log('onSelectedGameChange:', gameId);
     this.setState({gameId});
     this.loadGame(gameId);
   }
@@ -48,7 +48,7 @@ class WizardReturnToGame extends React.Component {
     axios.get(`/games/${gameId}`)
     .then((response) => {
       let game = response.data;
-      console.log('loadGame-scoreTable rows:', game.scoreTable.rows.length);
+      // console.log('loadGame-scoreTable rows:', game.scoreTable.rows.length);
       this.loadBoard(game);
     })
     .catch(err => {
@@ -78,7 +78,7 @@ class WizardReturnToGame extends React.Component {
   onPlayerNameChanged = (event) => {
     let playerName = event.target.value;
     let player = this.state.game.players.find(p => p.name === playerName);
-    console.log('onPlayerNameChanged:', playerName, player);
+    // console.log('onPlayerNameChanged:', playerName, player);
     this.setState({
       playerName,
       player
@@ -87,7 +87,7 @@ class WizardReturnToGame extends React.Component {
     
   onGamePasswordChange = (event) => {
     let pwd = event.target.value;
-    console.log('onGamePasswordChange:', pwd);
+    // console.log('onGamePasswordChange:', pwd);
     this.setState({gamePassword: pwd});
   }
 

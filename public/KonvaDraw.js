@@ -2,31 +2,45 @@ const NAME_START_COMB = "comb";
 const NAME_START_DRAWLINE = "line-draw";
 const NAME_TEMPLINE = "line-temp";
 
+function isSamePos(pos1, pos2) {
+  return pos1.x === pos2.x && pos1.y === pos2.y;
+}
+
+function onLayerRightMouseClick(layer, event) {
+  event.evt.preventDefault();
+}
+
 function onLayerMouseClick(layer, event) {
   // console.log('onLayerMouseClick', event.evt);
   let mousePosOnLayer = {x: event.evt.layerX, y: event.evt.layerY };
   
   if (event.evt.button !== 0) {
-     cancelDraw(layer);
-     return;
+    cancelDraw(layer);
+    return;
   }
 
   let comb = getNearestCombToMouse(layer);
   //console.log('onLayerMouseClick-comb', comb);
   if (comb) {
-    if (konvaState.drawStartComb) {
-      let player = konvaState.session.player;
-      let lineShape = drawLineForCombs(layer, mongoose.Types.ObjectId(), 
-        player, konvaState.drawStartComb, mousePosOnLayer);
-      let playerId = player._id.toString();
-      //console.log('onLayerMouseClick-drawLine:', line, playerId);
-      konvaState.addDrawLine({ 
-        _id: lineShape.attrs.mongoId, 
-        points: lineShape.attrs.points, 
-        playerId 
-      });
+    if (konvaState.drawStartComb === null) {
+      konvaState.drawStartComb = mousePosOnLayer;
+    } else {
+      let comb1 = getNearestCombToPos(konvaState.drawStartComb);
+      let comb2 = getNearestCombToPos(mousePosOnLayer);
+      if (!isSamePos(comb1, comb2)) {
+        let player = konvaState.session.player;
+        let lineShape = drawLineForCombs(layer, mongoose.Types.ObjectId(), 
+          player, konvaState.drawStartComb, mousePosOnLayer);
+        let playerId = player._id.toString();
+        //console.log('onLayerMouseClick-drawLine:', line, playerId);
+        konvaState.addDrawLine({ 
+          _id: lineShape.attrs.mongoId, 
+          points: lineShape.attrs.points, 
+          playerId 
+        });
+        konvaState.drawStartComb = mousePosOnLayer;
+      }
     }
-    konvaState.drawStartComb = mousePosOnLayer;
   }
 }
 
@@ -49,11 +63,6 @@ function onLayerMouseMove(layer, event) {
       konvaState.drawMouseOverLine = line;
     }
   }
-}
-
-function onLayerRightMouseClick(layer, event) {
-  event.evt.preventDefault();
-  //cancelDraw(layer);
 }
 
 function rectMiddle(rect) {
@@ -84,12 +93,16 @@ function getRelativePointerPosition(node) {
 
 function getNearestCombToMouse(layer) {
   let mousePos = getRelativePointerPosition(layer);
+  return getNearestCombToPos(mousePos);
+}
+
+function getNearestCombToPos(pos) {
   let combOrigin00 = pointMinus(getCombMiddle(0, 0), 
     {x: combDiffX, y: combDiffY });
   let combDistance = {x: 2 * combDiffX, y: 1.5 * COMB_RADIUS };
   let hitRect = { x: 0, y: 0, width: 2 * combDiffX, height: COMB_RADIUS };
 
-  let diff = pointMinus(mousePos, combOrigin00);
+  let diff = pointMinus(pos, combOrigin00);
   let multiY = Math.floor(diff.y / combDistance.y);
   let multiX = 0;
   let deltaX = 0;
@@ -107,8 +120,8 @@ function getNearestCombToMouse(layer) {
   combRect = {x: multiX * combDistance.x + deltaX + combOrigin00.x, 
     y: multiY * combDistance.y + combOrigin00.y,
     width: hitRect.width, height: hitRect.height };
-  if (rectContainsPoint(combRect, mousePos) !== true) {
-    //console.log('getNearestCombToMouse-contains-point', combRect, mousePos);
+  if (rectContainsPoint(combRect, pos) !== true) {
+    //console.log('getNearestCombToMouse-contains-point', combRect, pos);
     return null;
   }
 

@@ -10,6 +10,10 @@ import { setErrorMessage } from '../actions/messageActions';
 import store from '../store';
 
 class GameContainer extends React.Component {
+  state = {
+    isReloadInterrupted: false
+  }
+
   doReloadGame = () => {
     const cbSuccess = (newGame) => {
       this.props.setErrorMessage(null);
@@ -27,21 +31,24 @@ class GameContainer extends React.Component {
 
   componentDidMount() {
     setInterval(() => {
-      if (this.props.isAutoReload) {
+      if (this.props.isAutoReload && !this.state.isReloadInterrupted) {
         this.doReloadGame();
       }
     }, 10000);
   }
 
   doSaveGameWithCallbacks = (game, cbSuccess, cbError) => {
+    this.setState({isReloadInterrupted: true});
     saveGame(game, (newGame) => {
       this.props.setErrorMessage(null);
       // console.log('Game saved');
       cbSuccess(newGame);
+      this.setState({isReloadInterrupted: false});
     }, (err) => {
       console.log(err);
       this.props.setErrorMessage('Error saving\\ngame!');
       cbError(err);
+      this.setState({isReloadInterrupted: false});
     });
   }
 
