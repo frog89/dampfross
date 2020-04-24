@@ -35,6 +35,7 @@ function cloneDefaultStage(){
     setPuppet: null,
     addDrawLine: null,
     removeDrawLine: null,
+    isCurrentPlayerEqualLoginPlayer: null,
   
     stage: null,
     drawMouseOverLine: null,
@@ -397,7 +398,7 @@ function deleteElements() {
 }
 
 function drawElements(session, board, game, setPuppet, 
-    addDrawLine, removeDrawLine) {  
+    addDrawLine, removeDrawLine, isCurrentPlayerEqualLoginPlayer) {  
   ({ width, height, combs, borders, rivers, townTexts, textObjects, combLines } = board);
   konvaState.session = session;
   konvaState.game = game;
@@ -405,6 +406,7 @@ function drawElements(session, board, game, setPuppet,
   konvaState.setPuppet = setPuppet;
   konvaState.addDrawLine = addDrawLine;
   konvaState.removeDrawLine = removeDrawLine;
+  konvaState.isCurrentPlayerEqualLoginPlayer = isCurrentPlayerEqualLoginPlayer;
 
   //console.log('combs', combs);
   //console.log('borders', borders);

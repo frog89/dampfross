@@ -12,14 +12,14 @@ function onLayerRightMouseClick(layer, event) {
 
 function onLayerMouseClick(layer, event) {
   // console.log('onLayerMouseClick', konvaState.drawStartComb);
-  let mousePosOnLayer = getRelativePointerPosition(layer);
   
-  if (event.evt.button !== 0) {
-    console.log('onLayerMouseClick-cancelDraw');
+  if (event.evt.button !== 0 || !konvaState.isCurrentPlayerEqualLoginPlayer()) {
+    // console.log('onLayerMouseClick-cancelDraw');
     cancelDraw(layer);
     return;
   }
 
+  let mousePosOnLayer = getRelativePointerPosition(layer);
   let comb = getNearestCombToMouse(layer);
   //console.log('onLayerMouseClick-comb', comb);
   if (comb) {
@@ -148,6 +148,7 @@ function drawTempLine(layer, startComb, comb) {
     points: linePoints,
     stroke: 'gray',
     strokeWidth: 3,
+    listening: false,
   });
   layer.add(line);
   layer.batchDraw();

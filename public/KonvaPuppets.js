@@ -45,6 +45,15 @@ function drawPuppets(puppetLayer, dragLayer) {
 function initDragDrop(puppetLayer, dragLayer) {
   konvaState.stage.on("dragstart", function(evt) {
     var puppet = evt.target;
+
+    // console.log('drag', puppet.attrs.name, konvaState.session.player._id);
+    let isCurrentPlayer = konvaState.isCurrentPlayerEqualLoginPlayer();
+    if (puppet.attrs.name !== konvaState.session.player._id || 
+        !isCurrentPlayer) {
+      console.log('drag-return', isCurrentPlayer, puppet.attrs.name, konvaState.session.player._id);
+      puppet.stopDrag();
+      return;
+    }
     // moving to another layer will improve dragging performance
     puppet.moveTo(dragLayer);
     puppetLayer.draw();

@@ -68,7 +68,8 @@ class GameContainer extends React.Component {
       this.props.game, 
       this.setPuppet,
       this.addDrawLine,
-      this.removeDrawLine);
+      this.removeDrawLine,
+      this.isCurrentPlayerEqualLoginPlayer);
   }
 
   setPuppet = (puppetCfg) => {
@@ -94,6 +95,10 @@ class GameContainer extends React.Component {
     window.deleteElements();
   }
 
+  isCurrentPlayerEqualLoginPlayer = () => {
+    return this.props.game.players[this.props.game.nextPlayerIndex]._id === this.props.session.player._id;
+  }
+  
   render() {
     let funcs = { 
       cbReloadGame: this.doReloadGame,
