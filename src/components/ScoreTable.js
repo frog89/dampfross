@@ -24,7 +24,7 @@ class ScoreTable extends React.Component {
     let gridRow = params.data;
     let gridCol = params.colDef;
     let newVal  = params.newValue;
-    console.log('setValueChanged:', gridRow.no, gridCol.field, newVal);
+    // console.log('setValueChanged:', gridRow.no, gridCol.field, newVal);
 
     let rowIdx = gridRow.no - 1;
     let changedRow = { ...this.props.rows[rowIdx] };
@@ -38,6 +38,11 @@ class ScoreTable extends React.Component {
     this.props.cbFuncs.cbSaveGame(this.props.game);
   }
 
+  isColumnEditable = (params) => {
+    // console.log('isColumnEditable', params);
+    return this.isCurrentPlayerEqualLoginPlayer();
+  }
+
   resetColumns() {
     let resetNeeded = this.props.isResetScoreTableColumnsNeeded || 
       this.state.columns.length !== this.props.players.length + 1
@@ -47,7 +52,7 @@ class ScoreTable extends React.Component {
 
     this.props.setResetScoreTableColumns(false);
 
-    let cols = getColumnsForPlayers(this.props.players, this.setValueChanged);
+    let cols = getColumnsForPlayers(this.props.players, this.setValueChanged, this.isColumnEditable);
     this.setState({ columns: cols });
   }
 
@@ -95,10 +100,10 @@ class ScoreTable extends React.Component {
       getRowNodeId: function(row) {
         return row.no;
       },
+
     }
     let buttonsDisabledStyle = this.isCurrentPlayerEqualLoginPlayer() ? '' : 'disabled';
     return (
-  
       <div className="container-fluid" 
           style={{
             marginTop: '10px',

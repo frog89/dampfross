@@ -15,14 +15,14 @@ export const getFirstRow = (players) => {
   return firstRow;
 }
 
-export const getColumnsForPlayers = (players, cbSetValue) => {
-  let userColumns = getUserColumnsForPlayers(players, cbSetValue);
+export const getColumnsForPlayers = (players, cbSetValue, cbIsEditable) => {
+  let userColumns = getUserColumnsForPlayers(players, cbSetValue, cbIsEditable);
   let cols = [{field: 'no', headerName: 'No.', resizable: false, editable: false}];
   cols.push(...userColumns);
   return cols;
 }
 
-export const getUserColumnsForPlayers = (players, cbSetValue) => {
+export const getUserColumnsForPlayers = (players, cbSetValue, cbIsEditable) => {
   let userColumns = players.map((player, k) => {
     return ({
       valueGetter: function(params) {
@@ -38,7 +38,7 @@ export const getUserColumnsForPlayers = (players, cbSetValue) => {
       field: player._id,
       headerName: player.name,
       resizable: true, 
-      editable: true
+      editable: cbIsEditable
     });
   });
   console.log('getUserColumnsForPlayers:', players, userColumns);
