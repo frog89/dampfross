@@ -51,6 +51,7 @@ class Menu extends React.Component {
 
   onLeaveClick = (event) => {
     this.props.resetState();
+    this.props.cbFuncs.cbDeleteBoard();
   }
 
   render() {

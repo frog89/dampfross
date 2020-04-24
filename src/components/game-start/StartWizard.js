@@ -20,11 +20,11 @@ class StartWizard extends React.Component {
       wizardPage = <WizardStartOption/>;
     } else if (this.props.startWizardPage === 2) {
       if (this.props.attendOption === Constants.START_OPTION_NEW_GAME ) {
-        wizardPage = <WizardNewGame/>;
+        wizardPage = <WizardNewGame cbFuncs={this.props.cbFuncs}/>;
       } else if (this.props.attendOption === Constants.START_OPTION_ATTEND_GAME ) {
         wizardPage = <WizardAttendGame cbFuncs={this.props.cbFuncs}/>;
       } else {
-        wizardPage = <WizardReturnToGame/>;
+        wizardPage = <WizardReturnToGame cbFuncs={this.props.cbFuncs}/>;
       }
     }
     return (

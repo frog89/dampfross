@@ -12,8 +12,6 @@ const initialState = {
     isAutoReload: false,
     isGameStarting: true,
     isScoreTableVisible: true,
-    isKonvaRedrawNeeded: false,
-    isKonvaDeleteNeeded: false,
     isReloadGameNeeded: false,
     isSaveGameNeeded: false,
     isResetScoreTableColumnsNeeded: false,
@@ -101,10 +99,6 @@ const rootReducer = (state = initialState, action) => {
     case 'RESET_STATE':
       let newState = {
         ...initialState,
-        session: {
-          ...initialState.session,
-          isKonvaDeleteNeeded: true
-        }
       };
       console.log('RESET_STATE', newState);
       return newState;
@@ -136,26 +130,6 @@ const rootReducer = (state = initialState, action) => {
         session: {
           ...state.session,
           isAutoReload: action.isAutoReload,
-        },
-      }
-
-    case 'SET_KONVA_REDRAW_NEEDED':
-      console.log('SET_KONVA_REDRAW_NEEDED', action.isNeeded);
-      return {
-        ...state,
-        session: {
-          ...state.session,
-          isKonvaRedrawNeeded: action.isNeeded,
-        },
-      }
-
-    case 'SET_KONVA_DELETE_NEEDED':
-      console.log('SET_KONVA_DELETE_NEEDED', action.isNeeded);
-      return {
-        ...state,
-        session: {
-          ...state.session,
-          isKonvaDeleteNeeded: action.isNeeded,
         },
       }
 

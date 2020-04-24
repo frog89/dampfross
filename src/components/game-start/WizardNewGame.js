@@ -4,7 +4,6 @@ import mongoose from 'mongoose';
 import { connect } from 'react-redux';
 import { getFirstRow } from '../../actions/scoreTableActions';
 import { setGameStarting, setStartWizardPage } from '../../actions/startWizardActions';
-import { setKonvaRedrawNeeded } from '../../actions/konvaActions';
 import { setAutoReload } from '../../actions/gameActions';
 
 import * as Constants from '../../constants';
@@ -85,7 +84,7 @@ class WizardNewGame extends React.Component {
       this.props.setPlayer(game.players[0]);
       this.props.setGameAndBoard(game, response.data);
       this.props.setAutoReload(true);
-      this.props.setKonvaRedrawNeeded(true);
+      // this.props.cbFuncs.cbRedrawBoard();
       this.props.setGameStarting(false);
     })
     .catch(err => console.log(err));
@@ -242,7 +241,6 @@ const mapDispatchToProps = (dispatch) => {
     setGameAndBoard: (game, board) => { dispatch(setGameAndBoard(game, board)) },
     setPlayer: (player) => { dispatch(setPlayer(player)) },
     setGameStarting: (isStarting) => { dispatch(setGameStarting(isStarting)) },
-    setKonvaRedrawNeeded: (isRedrawNeeded) => { dispatch(setKonvaRedrawNeeded(isRedrawNeeded)) },
     setAutoReload: (isAutoReload) => { dispatch(setAutoReload(isAutoReload)) },
   }
 }

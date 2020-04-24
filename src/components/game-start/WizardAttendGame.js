@@ -4,7 +4,6 @@ import axios from 'axios';
 import mongoose from 'mongoose';
 
 import { setAutoReload } from '../../actions/gameActions';
-import { setKonvaRedrawNeeded } from '../../actions/konvaActions';
 import { setStartWizardPage, setGameStarting } from '../../actions/startWizardActions';
 import './StartWizard.css';
 
@@ -96,12 +95,11 @@ class WizardAttendGame extends React.Component {
     this.props.setPlayer(player);
     this.props.setGameAndBoard(game, board);
     this.props.setAutoReload(true);
-    this.props.setKonvaRedrawNeeded(true);
     this.props.setGameStarting(false);
   }
 
   saveGameErrorCallback = (err) => {
-    // console.log('saveGame-err', err);
+    console.log('saveGame-err', err);
     this.setState({error: err.data.message});
   };
 
@@ -249,7 +247,6 @@ const mapDispatchToProps = (dispatch) => {
     setGameAndBoard: (game, board) => { dispatch(setGameAndBoard(game, board)) },
     setPlayer: player => { dispatch(setPlayer(player)) },
     setGameStarting: isStarting => { dispatch(setGameStarting(isStarting)) },
-    setKonvaRedrawNeeded: isRedrawNeeded => { dispatch(setKonvaRedrawNeeded(isRedrawNeeded)) },
     setAutoReload: isAutoReload => { dispatch(setAutoReload(isAutoReload)) },
   }
 }

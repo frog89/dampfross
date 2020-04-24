@@ -4,7 +4,6 @@ import axios from 'axios';
 
 import { setAutoReload } from '../../actions/gameActions';
 import { setGameStarting, setStartWizardPage } from '../../actions/startWizardActions';
-import { setKonvaRedrawNeeded } from '../../actions/konvaActions';
 import './StartWizard.css';
 
 class WizardReturnToGame extends React.Component {
@@ -106,7 +105,6 @@ class WizardReturnToGame extends React.Component {
     this.props.setPlayer(this.state.player);
     this.props.setGameAndBoard(this.state.game, this.state.board);
     this.props.setAutoReload(true);
-    this.props.setKonvaRedrawNeeded(true);
     this.props.setGameStarting(false);
   }
 
@@ -217,7 +215,6 @@ const mapDispatchToProps = (dispatch) => {
     setGameAndBoard: (game, board) => { dispatch(setGameAndBoard(game, board)) },
     setPlayer: (player) => { dispatch(setPlayer(player)) },
     setGameStarting: (isStarting) => { dispatch(setGameStarting(isStarting)) },
-    setKonvaRedrawNeeded: (isRedrawNeeded) => { dispatch(setKonvaRedrawNeeded(isRedrawNeeded)) },
     setAutoReload: (isAutoReload) => { dispatch(setAutoReload(isAutoReload)) },
   }
 }
