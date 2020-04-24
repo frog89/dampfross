@@ -31,7 +31,7 @@ class WizardReturnToGame extends React.Component {
     axios.get('/games')
       .then((response) => {
         this.setState({ gameNames: response.data.games });
-        this.setState({ gamePassword: 'denni' });
+        // this.setState({ gamePassword: 'denni' });
       })
       .catch(err => console.log(err));
   }

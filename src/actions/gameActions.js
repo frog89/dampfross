@@ -37,25 +37,6 @@ export const saveGame = (game, successCallback, errorCallback) => {
     .catch(err => errorCallback(err));
 }
 
-export const saveGameDispatched = (game) => {
-  return (dispatch) => {
-    saveGame(game, (newGame) => {
-      dispatch({
-        type: 'SAVE_GAME'
-      });
-    }, (err) => console.log(err))
-  }
-}
-
-export const actAndSave = (actionBeforeSave) => {
-  return (dispatch, getState) => {
-    dispatch(actionBeforeSave);
-
-    let state = getState();
-    dispatch(saveGameDispatched(state.game));
-  }
-}
-
 export const reloadGame = (gameId, successCallback, errorCallback) => {
   if (gameId === null) {
     return;
