@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { setSaveGameNeeded } from '../actions/gameActions';
 
 import AnimatedDice from '../images/dice.gif';
 import White1 from '../images/dice-w1.png';
@@ -78,7 +77,7 @@ class Dices extends React.Component {
         showAnimatedDices: false
       });
       this.props.setDices(redA, whiteA, redB, whiteB);
-      this.props.setSaveGameNeeded(true);
+      this.props.cbFuncs.cbSaveGame(this.props.game);
     }, 1000);
   }
 
@@ -130,6 +129,7 @@ const setDices = (redA, whiteA, redB, whiteB) => {
 
 const mapStateToProps = (state) => {
   return {
+    game: state.game,
     dices: state.game.dices,
     loginPlayer: state.session.player,
     players: state.game.players,
@@ -140,7 +140,6 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     setDices: (redA, whiteA, redB, whiteB) => { dispatch(setDices(redA, whiteA, redB, whiteB)) },
-    setSaveGameNeeded: (isNeeded) => { dispatch(setSaveGameNeeded(isNeeded)) },
   }
 }
 

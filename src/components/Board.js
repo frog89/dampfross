@@ -2,30 +2,39 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { setKonvaRedrawNeeded, setKonvaDeleteNeeded } from '../actions/konvaActions';
-import { setSaveGameNeeded } from '../actions/gameActions';
 import './Board.css';
 
 class Board extends React.Component {
   setPuppet = (puppetCfg) => {
     // console.log('setPuppet');
     this.props.setPuppetAction(puppetCfg);
-    this.props.setSaveGameNeeded(true);
+    this.props.cbFuncs.cbSaveGame(this.props.game);
   }
 
   addDrawLine = (drawLineCfg) => {
     // console.log('addDrawLine:');
     this.props.addDrawLineAction(drawLineCfg);
-    this.props.setSaveGameNeeded(true);
+    this.props.cbFuncs.cbSaveGame(this.props.game);
   }
 
   removeDrawLine = (mongoId) => {
     // console.log('removeDrawLine:');
     this.props.removeDrawLineAction(mongoId);
-    this.props.setSaveGameNeeded(true);
+    this.props.cbFuncs.cbSaveGame(this.props.game);
   }
 
   componentDidMount() {
     this.redrawBoard();
+  }
+
+  redrawBoard() {
+    window.drawElements(
+      this.props.session, 
+      this.props.board, 
+      this.props.game, 
+      this.setPuppet,
+      this.addDrawLine,
+      this.removeDrawLine);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -39,16 +48,6 @@ class Board extends React.Component {
       console.log('konva redraw');
       this.redrawBoard();
     }
-  }
-
-  redrawBoard() {
-    window.drawElements(
-      this.props.session, 
-      this.props.board, 
-      this.props.game, 
-      this.setPuppet,
-      this.addDrawLine,
-      this.removeDrawLine);
   }
 
   render() {
@@ -108,7 +107,6 @@ const mapDispatchToProps = (dispatch) => {
     setPuppetAction: (puppet) => { dispatch(setPuppetAction(puppet)) },
     addDrawLineAction: (drawLine) => { dispatch(addDrawLineAction(drawLine)) },
     removeDrawLineAction: (mongoId) => { dispatch(removeDrawLineAction(mongoId)) },
-    setSaveGameNeeded: (isNeeded) => { dispatch(setSaveGameNeeded(isNeeded)) },
     setKonvaRedrawNeeded: (isNeeded) => { dispatch(setKonvaRedrawNeeded(isNeeded)) },
     setKonvaDeleteNeeded: (isNeeded) => { dispatch(setKonvaDeleteNeeded(isNeeded)) },
   }

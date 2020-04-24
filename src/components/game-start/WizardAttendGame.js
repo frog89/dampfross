@@ -82,7 +82,7 @@ class WizardAttendGame extends React.Component {
       }
       console.log('rows-new', game.scoreTable.rows);
 
-      this.props.cbSaveGame(game, 
+      this.props.cbFuncs.cbSaveGame(game, 
         (game) => this.saveGameSuccessCallback(game, board, currentPlayer),
         (err) => this.saveGameErrorCallback(err));
     })

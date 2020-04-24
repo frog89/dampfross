@@ -11,15 +11,15 @@ class App extends React.Component {
     const bodyPart = this.props.isScoreTableVisible ?
       <div className="row">
         <div className="col-8 col-xl-9 pr-1">
-          <Board />      
+          <Board cbFuncs={this.props.cbFuncs} />
         </div>
         <div className="col-4 col-xl-3 pl-1">
-          <ScoreTable />
+          <ScoreTable cbFuncs={this.props.cbFuncs} />
         </div>
       </div> :
       <div className="row">
         <div className="col-12 pr-1">
-          <Board />      
+          <Board cbFuncs={this.props.cbFuncs} />      
         </div>
       </div>;
     return (
@@ -27,7 +27,7 @@ class App extends React.Component {
         <div className="container-fluid h-100" style={{ background: 'lightgrey' }}>
           <div className="row">
             <div className="col">
-              <HeaderBar cbSaveGame={this.props.cbSaveGame}/>
+              <HeaderBar cbFuncs={this.props.cbFuncs}/>
             </div>
           </div>
           {bodyPart}

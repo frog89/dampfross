@@ -20,7 +20,7 @@ class NextPlayer extends React.Component {
   }
 
   saveGame = (game) => {
-    this.props.cbSaveGame(game, 
+    this.props.cbFuncs.cbSaveGame(game, 
       (game) => {
         this.props.setGame(game);
       }, (err) => {});

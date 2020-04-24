@@ -129,30 +129,6 @@ const rootReducer = (state = initialState, action) => {
         },
       }
     
-    case 'SET_SAVE_GAME_NEEDED':
-      console.log('SET_SAVE_GAME_NEEDED', action.isNeeded);
-      return {
-        ...state,
-        session: {
-          ...state.session,
-          isSaveGameNeeded: action.isNeeded,
-        },
-      }
-
-    case 'SET_RELOAD_GAME_NEEDED':
-      console.log('SET_RELOAD_GAME_NEEDED', action.isNeeded);
-      return {
-        ...state,
-        session: {
-          ...state.session,
-          isReloadGameNeeded: action.isNeeded,
-        },
-      }
-  
-    case 'SAVE_GAME':
-      console.log('SAVE_GAME');
-      return state;
-
     case 'SET_AUTO_RELOAD':
       console.log('SET_AUTO_RELOAD', action.isAutoReload);
       return {

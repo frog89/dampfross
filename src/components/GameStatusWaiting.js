@@ -1,14 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { setSaveGameNeeded } from '../actions/gameActions';
 import * as Constants from '../constants';
 import './GameStatusWaiting.css';
 
 class GameStatusWaiting extends React.Component {
   onStartButtonClicked = (event) => {
     this.props.setGameStatus(Constants.GAME_STATUS_RUNNING);
-    this.props.setSaveGameNeeded(true);
+    this.props.cbFuncs.cbSaveGame(this.props.game);
   }
 
   render() {
@@ -46,7 +45,6 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     setGameStatus: (status) => { dispatch(setGameStatus(status)) },
-    setSaveGameNeeded: (isNeeded) => { dispatch(setSaveGameNeeded(isNeeded)) },
   }
 }
 

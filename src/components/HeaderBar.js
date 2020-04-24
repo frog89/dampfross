@@ -13,7 +13,7 @@ import AutoReload from '../images/auto-reload.png';
 import NoAutoReload from '../images/no-auto-reload.png';
 import * as Constants from '../constants';
 
-import { setAutoReload, setReloadGameNeeded } from '../actions/gameActions';
+import { setAutoReload } from '../actions/gameActions';
 
 import './HeaderBar.css';
 
@@ -31,11 +31,11 @@ class HeaderBar extends React.Component {
 
   onNoAutoReloadClick = () => {
     this.props.setAutoReload(true);
-    this.props.setReloadGameNeeded(true);
+    this.props.cbFuncs.cbReloadGame();
   }
 
   onAutoReloadClick = () => {
-    this.props.setReloadGameNeeded(true);
+    this.props.cbFuncs.cbReloadGame();
   }
 
   render() {
@@ -73,11 +73,11 @@ class HeaderBar extends React.Component {
               {
                 (this.props.game.status === Constants.GAME_STATUS_WAITING_FOR_PLAYERS) ?
                 <div className="col-auto align-self-center">
-                  <GameStatusWaiting/>
+                  <GameStatusWaiting cbFuncs={this.props.cbFuncs}/>
                 </div>
                 :
                 <div className="col-auto align-self-center">
-                  <NextPlayer cbSaveGame={this.props.cbSaveGame}/>
+                  <NextPlayer cbFuncs={this.props.cbFuncs}/>
                 </div>  
               }
               {
@@ -85,7 +85,7 @@ class HeaderBar extends React.Component {
                 null
                 :
                 <div className="col-auto align-self-center">
-                  <Dices/>
+                  <Dices cbFuncs={this.props.cbFuncs}/>
                 </div>  
               }
             </div>
@@ -94,7 +94,7 @@ class HeaderBar extends React.Component {
             <div style={{ textAlign: 'right'}}>
               <div className="row justify-content-end">
                 <div className="col-auto align-self-center">
-                  <Menu cbSaveGame={this.props.cbSaveGame}/>
+                  <Menu cbFuncs={this.props.cbFuncs}/>
                 </div>
                 <div className="col-auto align-self-center">
                   <CurrentPlayerInfo player={this.props.player}/>
@@ -133,7 +133,6 @@ const mapDispatchToProps = (dispatch) => {
   return {
     setScoreTableVisibility: isVisible => { dispatch(setScoreTableVisibility(isVisible)) },
     setAutoReload: isAutoReload => { dispatch(setAutoReload(isAutoReload)) },
-    setReloadGameNeeded: isNeeded => { dispatch(setReloadGameNeeded(isNeeded)) },
   }
 }
 

@@ -4,7 +4,6 @@ import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import { getColumnsForPlayers, setResetScoreTableColumns } from '../actions/scoreTableActions';
-import { setSaveGameNeeded } from '../actions/gameActions';
 
 class ScoreTable extends React.Component {
   state = {
@@ -36,7 +35,7 @@ class ScoreTable extends React.Component {
       ...this.props.rows.slice(rowIdx + 1) ];
 
     this.props.setScoreTableRows(newRows);
-    this.props.setSaveGameNeeded(true);
+    this.props.cbFuncs.cbSaveGame(this.props.game);
   }
 
   resetColumns() {
@@ -82,7 +81,7 @@ class ScoreTable extends React.Component {
   setRows = (rows) => {
     this.gridOptions.api.setRowData(rows);
     this.props.setScoreTableRows(rows);
-    this.props.setSaveGameNeeded(true);
+    this.props.cbFuncs.cbSaveGame(this.props.game);
   }
 
   isCurrentPlayerEqualLoginPlayer = () => {
@@ -153,6 +152,7 @@ const setScoreTableRows = (rows) => {
 
 const mapStateToProps = (state) => {
   return {
+    game: state.game,
     players: state.game.players,
     isScoreTableVisible: state.session.isScoreTableVisible,
     isResetScoreTableColumnsNeeded: state.session.isResetScoreTableColumnsNeeded,
@@ -166,7 +166,6 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     setScoreTableRows: rows => { dispatch(setScoreTableRows(rows)) },
-    setSaveGameNeeded: isNeeded => { dispatch(setSaveGameNeeded(isNeeded)) },
     setResetScoreTableColumns: isNeeded => { dispatch(setResetScoreTableColumns(isNeeded)) },
   }
 }

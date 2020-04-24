@@ -11,10 +11,11 @@ function onLayerRightMouseClick(layer, event) {
 }
 
 function onLayerMouseClick(layer, event) {
-  // console.log('onLayerMouseClick', event.evt);
-  let mousePosOnLayer = {x: event.evt.layerX, y: event.evt.layerY };
+  // console.log('onLayerMouseClick', konvaState.drawStartComb);
+  let mousePosOnLayer = getRelativePointerPosition(layer);
   
   if (event.evt.button !== 0) {
+    console.log('onLayerMouseClick-cancelDraw');
     cancelDraw(layer);
     return;
   }

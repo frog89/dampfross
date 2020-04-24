@@ -42,12 +42,10 @@ class Menu extends React.Component {
   }
 
   saveAndReloadGame = (game) => {
-    this.props.cbSaveGame(game, 
+    this.props.cbFuncs.cbSaveGame(game, 
       (game) => {
         this.props.setGame(game);
         this.props.setResetScoreTableColumns(true);
-        this.props.setSaveGameNeeded(true);
-        this.props.setReloadGameNeeded(true);
       }, (err) => {});
   }
 

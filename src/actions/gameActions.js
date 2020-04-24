@@ -7,20 +7,6 @@ export const setAutoReload = (isAutoReload) => {
   }
 } 
 
-export const setSaveGameNeeded = (isNeeded) => {
-  return {
-    type: 'SET_SAVE_GAME_NEEDED',
-    isNeeded,
-  }
-}
-
-export const setReloadGameNeeded = (isNeeded) => {
-  return {
-    type: 'SET_RELOAD_GAME_NEEDED',
-    isNeeded,
-  }
-}
-
 export const setGame = (game) => {
   return {
     type: 'SET_GAME',
