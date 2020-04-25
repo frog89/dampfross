@@ -54,6 +54,8 @@ function initDragDrop(puppetLayer, dragLayer) {
       puppet.stopDrag();
       return;
     }
+    konvaState.setReloadInterrupted('KonvaPuppet-57', true);
+
     // moving to another layer will improve dragging performance
     puppet.moveTo(dragLayer);
     puppetLayer.draw();
@@ -95,5 +97,6 @@ function initDragDrop(puppetLayer, dragLayer) {
     let puppetCfg = {x: puppet.attrs.x, y: puppet.attrs.y, playerId: puppet.attrs.name };
     //console.log('dragend-puppet:', puppetCfg);
     konvaState.setPuppet(puppetCfg);
+    konvaState.setReloadInterrupted('KonvaPuppet-100', false);
   });
 }

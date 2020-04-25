@@ -47,18 +47,24 @@ class GameContainer extends React.Component {
   }
 
   doSaveGame = (game, cbSuccess, cbError) => {
-    this.setState({isReloadInterrupted: true});
+    this.setReloadInterrupted('GameContainer-50', true);
     saveGame(game, (newGame) => {
-      this.props.setErrorMessage(null);
       // console.log('Game saved');
+      this.props.setErrorMessage(null);
+      this.props.setGame(newGame);
       cbSuccess && cbSuccess(newGame);
-      this.setState({isReloadInterrupted: false});
+      this.setReloadInterrupted('GameContainer-56', false);
     }, (err) => {
       console.log(err);
       this.props.setErrorMessage('Error saving\\ngame!');
       cbError && cbError(err);
-      this.setState({isReloadInterrupted: false});
+      this.setReloadInterrupted('GameContainer-56', false);
     });
+  }
+
+  setReloadInterrupted = (demandedBy, isInterrupted) => {
+    console.log('setReloadInterrupted:', demandedBy, isInterrupted);
+    this.setState({isReloadInterrupted: isInterrupted});
   }
 
   doRedrawBoard = () => {
@@ -69,7 +75,8 @@ class GameContainer extends React.Component {
       this.setPuppet,
       this.addDrawLine,
       this.removeDrawLine,
-      this.isCurrentPlayerEqualLoginPlayer);
+      this.isCurrentPlayerEqualLoginPlayer,
+      this.setReloadInterrupted);
   }
 
   setPuppet = (puppetCfg) => {
@@ -105,6 +112,7 @@ class GameContainer extends React.Component {
       cbSaveGame: this.doSaveGame,
       cbRedrawBoard: this.doRedrawBoard,
       cbDeleteBoard: this.doDeleteBoard,
+      cbIsCurrentPlayerEqualLoginPlayer: this.isCurrentPlayerEqualLoginPlayer,
     };
     let game = (this.props.isGameStarting) ?
       <StartWizard cbFuncs={funcs}/>

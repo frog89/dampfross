@@ -6,8 +6,9 @@ import './GameStatusWaiting.css';
 
 class GameStatusWaiting extends React.Component {
   onStartButtonClicked = (event) => {
-    this.props.setGameStatus(Constants.GAME_STATUS_RUNNING);
-    this.props.cbFuncs.cbSaveGame(this.props.game);
+    let gameToSave = { ...this.props.game };
+    gameToSave.status = Constants.GAME_STATUS_RUNNING;
+    this.props.cbFuncs.cbSaveGame(gameToSave);
   }
 
   render() {
@@ -29,13 +30,6 @@ class GameStatusWaiting extends React.Component {
   }
 }
 
-const setGameStatus = (status) => {
-  return {
-    type: 'SET_GAME_STATUS',
-    status
-  }
-}
-
 const mapStateToProps = (state) => {
   return {
     game: state.game
@@ -44,7 +38,6 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setGameStatus: (status) => { dispatch(setGameStatus(status)) },
   }
 }
 

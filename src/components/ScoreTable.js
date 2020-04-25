@@ -40,7 +40,7 @@ class ScoreTable extends React.Component {
 
   isColumnEditable = (params) => {
     // console.log('isColumnEditable', params);
-    return this.isCurrentPlayerEqualLoginPlayer();
+    return this.props.cbFuncs.cbIsCurrentPlayerEqualLoginPlayer();
   }
 
   resetColumns() {
@@ -89,11 +89,6 @@ class ScoreTable extends React.Component {
     this.props.cbFuncs.cbSaveGame(this.props.game);
   }
 
-  isCurrentPlayerEqualLoginPlayer = () => {
-    // console.log('isCurrentPlayerEqualLoginPlayer', this.props.loginPlayer, this.props.players[this.props.nextPlayerIndex]);
-    return this.props.players[this.props.nextPlayerIndex]._id === this.props.loginPlayer._id;
-  }
-
   render() {
     this.gridOptions.api && this.gridOptions.api.sizeColumnsToFit();
     let agGridOptions = {
@@ -102,7 +97,7 @@ class ScoreTable extends React.Component {
       },
 
     }
-    let buttonsDisabledStyle = this.isCurrentPlayerEqualLoginPlayer() ? '' : 'disabled';
+    let buttonsDisabledStyle = this.props.cbFuncs.cbIsCurrentPlayerEqualLoginPlayer() ? '' : 'disabled';
     return (
       <div className="container-fluid" 
           style={{

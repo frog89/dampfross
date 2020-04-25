@@ -25,6 +25,7 @@ function onLayerMouseClick(layer, event) {
   if (comb) {
     if (konvaState.drawStartComb === null) {
       konvaState.drawStartComb = mousePosOnLayer;
+      konvaState.setReloadInterrupted('KonvaDraw-28', true);
     } else {
       let comb1 = getNearestCombToPos(konvaState.drawStartComb);
       let comb2 = getNearestCombToPos(mousePosOnLayer);
@@ -136,6 +137,7 @@ function cancelDraw(layer) {
   }
   konvaState.drawMouseOverLine = null;
   konvaState.drawStartComb = null;
+  konvaState.setReloadInterrupted('KonvaDraw-140', false);
 }
 
 function drawTempLine(layer, startComb, comb) {
@@ -163,7 +165,7 @@ function drawLineForCombs(layer, mongoId, player, startComb, comb) {
   return drawLine(layer, mongoId, player, linePoints);
 }
 
-function drawLine(layer, mongoId, player, linePoints) {
+function drawLine(layer, mongoId, player, linePoints, isLastDrawing) {
   let name = `${NAME_START_DRAWLINE}-${mongoId}`;
   line = new Konva.Line({
     mongoId,
@@ -172,7 +174,9 @@ function drawLine(layer, mongoId, player, linePoints) {
     name: name,
     points: linePoints,
     stroke: player.penColor,
-    strokeWidth: 3,
+    strokeWidth: 4,
+    dashEnabled: isLastDrawing,
+    dash: [10, 5],
   });
   line.on('dblclick', (event) => {
     // console.log('event:', event);
@@ -190,10 +194,17 @@ function drawLine(layer, mongoId, player, linePoints) {
 }
 
 function drawDrawLines(layer) {
-  for (let i = 0; i<konvaState.game.drawLines.length; i++) {
+  let currentPlayer = null;
+  let isLastDrawing = true;
+  for (let i = konvaState.game.drawLines.length - 1; i >= 0; i--) {
     let drawLineCfg = konvaState.game.drawLines[i];
     let player = konvaState.game.players.find(p => p._id === drawLineCfg.playerId);
+    if (currentPlayer === null) {
+      currentPlayer = player;
+    } else if (player !== currentPlayer) {
+      isLastDrawing = false;
+    }
     //console.log('drawDrawLines:', player, drawLineCfg);
-    let line = drawLine(layer, drawLineCfg._id, player, drawLineCfg.points);
+    let line = drawLine(layer, drawLineCfg._id, player, drawLineCfg.points, isLastDrawing);
   }
 }

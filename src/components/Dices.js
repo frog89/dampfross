@@ -20,10 +20,17 @@ import './Dices.css';
 class Dices extends React.Component {
   state={
     showAnimatedDices: false,
+    isDicingAllowed: true,
   }
 
   componentDidMount() {
     this.props.setDices(0, 0, 0, 0);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps == null || prevProps.nextPlayerIndex !== this.props.nextPlayerIndex) {
+      this.setState({isDicingAllowed: true});
+    }
   }
 
   getRedDice = (num) => {
@@ -65,6 +72,7 @@ class Dices extends React.Component {
   }
 
   dice = () => {
+    this.setState({isDicingAllowed: false});
     this.props.setDices(0, 0, 0, 0);
     this.setState({showAnimatedDices: true });
     const redA = this.getRandomDice();
@@ -81,12 +89,12 @@ class Dices extends React.Component {
     }, 1000);
   }
 
-  isCurrentPlayerEqualLoginPlayer = () => {
-    return this.props.players[this.props.nextPlayerIndex]._id === this.props.loginPlayer._id;
-  }
-
   render() {
-    let wuerfelButtonDisabledStyle = this.isCurrentPlayerEqualLoginPlayer() ? '' : 'disabled';
+    console.log('Dices-render:', this.state.isDicingAllowed, 
+      this.props.cbFuncs.cbIsCurrentPlayerEqualLoginPlayer());
+
+    let wuerfelButtonDisabledStyle = this.state.isDicingAllowed &&
+      this.props.cbFuncs.cbIsCurrentPlayerEqualLoginPlayer() ? '' : 'disabled';
     const wuerfelButton = 
       <a href="/#" className={`btn btn-primary pt-1 pb-1 ${wuerfelButtonDisabledStyle}`}
             onClick={this.dice}
@@ -131,8 +139,6 @@ const mapStateToProps = (state) => {
   return {
     game: state.game,
     dices: state.game.dices,
-    loginPlayer: state.session.player,
-    players: state.game.players,
     nextPlayerIndex: state.game.nextPlayerIndex,
   }
 }

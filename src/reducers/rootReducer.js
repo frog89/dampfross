@@ -150,16 +150,6 @@ const rootReducer = (state = initialState, action) => {
         game: action.game
       }
 
-    case 'SET_GAME_STATUS':
-      console.log('SET_GAME_STATUS', action.status);
-      return {
-        ...state,
-        game: {
-          ...state.game,
-          status: action.status
-        }
-      }
-  
     case 'SET_GAME_AND_BOARD':
       console.log('SET_GAME_AND_BOARD', action.game.name, action.board.name);
       return {
