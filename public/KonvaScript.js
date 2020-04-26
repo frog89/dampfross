@@ -2,7 +2,10 @@ const COMB_EMPTY = 1; // Empty
 const COMB_MOUNTAIN = 15; // Mountain
 const COMB_TOWN = 7; // Town
 const COMB_WATER = 14; // Water (Lake or sea)
+const COMB_UNKNOWN = 5; // Unknown terrain
+const COMB_SPECIAL_POINT = 16; // Specific points like connections to other lands
 
+const TEXTOBJ_VERY_SMALL = 17;
 const TEXTOBJ_BIG = 18;
 const TEXTOBJ_MIDDLE = 19;
 const TEXTOBJ_SMALL = 20;
@@ -58,6 +61,10 @@ function getCombTypeName(comb) {
     return 't';
   } else if (comb===COMB_WATER) {
     return 'w';
+  } else if (comb===COMB_UNKNOWN) {
+    return 'u';
+  } else if (comb===COMB_SPECIAL_POINT) {
+    return 's';
   }
   return 'e';
 }
@@ -74,6 +81,10 @@ function getCombColor(comb) {
     return 'yellow';
   } else if (comb===COMB_WATER) {
     return '#339CFF';
+  } else if (comb===COMB_UNKNOWN) {
+    return '#BEBEBE';
+  } else if (comb===COMB_SPECIAL_POINT) {
+    return '#F37F7F';
   }
   return 'white';
 }
@@ -227,7 +238,7 @@ function getTextObjLetterSpacing(textObject) {
     return 10;
   } else if (textObject === TEXTOBJ_MIDDLE) {
       return 4;
-  } else if (textObject === TEXTOBJ_SMALL) {
+  } else if (textObject === TEXTOBJ_SMALL || textObject === TEXTOBJ_VERY_SMALL) {
       return 0;
   }  
 }
@@ -239,6 +250,8 @@ function getTextObjSize(textObject) {
       return 30;
   } else if (textObject === TEXTOBJ_SMALL) {
       return 15;
+  } else if (textObject === TEXTOBJ_VERY_SMALL) {
+      return 10;
   }  
 }
 
@@ -326,11 +339,11 @@ function addCombLine(layer, x, y, combLine, lineData) {
   } else if (combLine === COMBLINE_WHITE_DASHED) {
     color = 'white';
     dashEnabled = true;
-    opacity = 0.5;
+    opacity = 0.7;
   } else if (combLine === COMBLINE_WHITE_SOLID) {
     color = 'white';
     dashEnabled = false;
-    opacity = 0.5;
+    opacity = 0.7;
   }
 
   let line = new Konva.Line({
