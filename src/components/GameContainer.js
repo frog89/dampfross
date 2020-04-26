@@ -103,7 +103,8 @@ class GameContainer extends React.Component {
   }
 
   isCurrentPlayerEqualLoginPlayer = () => {
-    return this.props.game.players[this.props.game.nextPlayerIndex]._id === this.props.session.player._id;
+    return this.props.game.players[this.props.game.nextPlayerIndex]._id === 
+      this.props.session.player._id.toString();
   }
   
   render() {

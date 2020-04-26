@@ -21,8 +21,8 @@ class NextPlayer extends React.Component {
 
   saveGame = (game) => {
     this.props.cbFuncs.cbSaveGame(game, 
-      (game) => {
-        this.props.setGame(game);
+      (newGame) => {
+        this.props.setGame(newGame);
       }, (err) => {});
   }
 

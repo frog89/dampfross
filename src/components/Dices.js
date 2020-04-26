@@ -90,8 +90,11 @@ class Dices extends React.Component {
   }
 
   render() {
-    console.log('Dices-render:', this.state.isDicingAllowed, 
-      this.props.cbFuncs.cbIsCurrentPlayerEqualLoginPlayer());
+    // console.log('Dices-render:', this.state.isDicingAllowed, 
+    //   this.props.cbFuncs.cbIsCurrentPlayerEqualLoginPlayer(),
+    //   this.props.game.nextPlayerIndex,
+    //   this.props.game.players[this.props.game.nextPlayerIndex]._id,
+    //   this.props.session.player._id);
 
     let wuerfelButtonDisabledStyle = this.state.isDicingAllowed &&
       this.props.cbFuncs.cbIsCurrentPlayerEqualLoginPlayer() ? '' : 'disabled';
@@ -137,6 +140,7 @@ const setDices = (redA, whiteA, redB, whiteB) => {
 
 const mapStateToProps = (state) => {
   return {
+    session: state.session,
     game: state.game,
     dices: state.game.dices,
     nextPlayerIndex: state.game.nextPlayerIndex,

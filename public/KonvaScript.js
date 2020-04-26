@@ -76,7 +76,7 @@ function getCombName(comb, x, y) {
 
 function getCombColor(comb) {
   if (comb===COMB_MOUNTAIN) {
-    return '#E67300';
+    return '#BD5300';
   } else if (comb===COMB_TOWN) {
     return 'yellow';
   } else if (comb===COMB_WATER) {
@@ -171,7 +171,7 @@ function addComb(layer, x, y, comb) {
     fill: getCombColor(comb),
     sides: 6,
     stroke: 'black',
-    strokeWidth: 1
+    strokeWidth: 1,
   });
   layer.add(polygon);
   polygon.cache();
@@ -186,7 +186,8 @@ function addInsideTownText(layer, x, y, townText) {
     text: townText,
     fontSize: 16,
     fontFamily: 'Calibri',
-    fill: 'black'
+    fill: 'black',
+    listening: false,
   });
   text.offsetX(text.width() / 2);
   text.offsetY(text.height() / 2);
@@ -203,7 +204,8 @@ function addOutsideTownText(layer, x, y, townText) {
     text: townText,
     fontSize: 14,
     fontFamily: 'Calibri',
-    fill: 'black'
+    fill: 'black',
+    listening: false,
   });
   text.offsetX(combDiffX * 0.8);
   text.offsetY(text.height() / 2);
@@ -217,7 +219,8 @@ function addBorderLine(layer, linePoints) {
     y: 0,
     points: linePoints,
     stroke: 'red',
-    strokeWidth: 3
+    strokeWidth: 3,
+    listening: false,
   });
   layer.add(line);
 }
@@ -228,7 +231,8 @@ function addRiverLine(layer, linePoints) {
     y: 0,
     points: linePoints,
     stroke: 'blue',
-    strokeWidth: 6
+    strokeWidth: 6,
+    listening: false,
   });
   layer.add(line);
 }
@@ -265,7 +269,8 @@ function addTextObject(layer, x, y, textObject, text) {
     fontSize: getTextObjSize(textObject),
     fontFamily: 'Calibri',
     fill: 'black',
-    letterSpacing: getTextObjLetterSpacing(textObject)
+    letterSpacing: getTextObjLetterSpacing(textObject),
+    listening: false,
   });
   konvaText.offsetX(konvaText.height() / 3);
   konvaText.offsetY(konvaText.height() / 2);
@@ -355,6 +360,7 @@ function addCombLine(layer, x, y, combLine, lineData) {
     strokeWidth: 5,
     dashEnabled,  
     dash: [10, 5],
+    listening: false,
   });
   layer.add(line);
 }
