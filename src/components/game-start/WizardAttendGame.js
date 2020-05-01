@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 
 import { setAutoReload } from '../../actions/gameActions';
 import { setStartWizardPage, setGameStarting } from '../../actions/startWizardActions';
+import AnimatedTrain from '../../images/ani-train.gif';
 import './StartWizard.css';
 
 class WizardAttendGame extends React.Component {
@@ -15,6 +16,7 @@ class WizardAttendGame extends React.Component {
     gameId: '',
     games: [],
     error: '',
+    isAniTrainVisible: false,
   }
 
   componentDidMount() {
@@ -22,9 +24,10 @@ class WizardAttendGame extends React.Component {
   }
 
   fetchGameNames = () => {
+    this.setState({ isAniTrainVisible: true });
     axios.get('/games/waiting')
     .then((response) => {
-      this.setState({ games: response.data.games });
+      this.setState({ isAniTrainVisible: false, games: response.data.games });
       // this.setState({
       //   playerName: "Stephan",
       //   gamePassword: "xy",
@@ -132,6 +135,9 @@ class WizardAttendGame extends React.Component {
   }
 
   render() {
+    const aniTrain = !this.state.isAniTrainVisible ? null :
+      <img src={AnimatedTrain} className="aniTrain pl-2 pt-0" alt="ani-train" />;
+
     const gameChooser = 
       <select className="combobox form-control" name="gameChooser" id="game"
         onChange={this.onGameChange} value={this.state.gameId}
@@ -182,6 +188,7 @@ class WizardAttendGame extends React.Component {
 
           <div className="form-group text-left">
             <label htmlFor="game">Game:</label>
+            {aniTrain}
             {gameChooser}
           </div>
 

@@ -4,6 +4,7 @@ import axios from 'axios';
 
 import { setAutoReload } from '../../actions/gameActions';
 import { setGameStarting, setStartWizardPage } from '../../actions/startWizardActions';
+import AnimatedTrain from '../../images/ani-train.gif';
 import './StartWizard.css';
 
 class WizardReturnToGame extends React.Component {
@@ -20,6 +21,8 @@ class WizardReturnToGame extends React.Component {
     board: null,
 
     error: '',
+    isGameAniTrainVisible: false,
+    isPlayerAniTrainVisible: false,
   }
 
   componentDidMount() {
@@ -27,9 +30,10 @@ class WizardReturnToGame extends React.Component {
   }
 
   fetchGameNames = () => {
+    this.setState({ isGameAniTrainVisible: true });
     axios.get('/games')
       .then((response) => {
-        this.setState({ gameNames: response.data.games });
+        this.setState({ isGameAniTrainVisible: false, gameNames: response.data.games });
         // this.setState({ gamePassword: 'denni' });
       })
       .catch(err => console.log(err));
@@ -43,7 +47,7 @@ class WizardReturnToGame extends React.Component {
   }
 
   loadGame = (gameId) => {
-    this.setState({ error: null });
+    this.setState({ isPlayerAniTrainVisible: true, error: null });
     axios.get(`/games/${gameId}`)
     .then((response) => {
       let game = response.data;
@@ -65,7 +69,8 @@ class WizardReturnToGame extends React.Component {
         game,
         board,
         playerName: '',
-        playerNames: playerNames
+        playerNames: playerNames,
+        isPlayerAniTrainVisible: false,
       });
     })
     .catch(err => {
@@ -109,6 +114,11 @@ class WizardReturnToGame extends React.Component {
   }
 
   render() {
+    const gameAniTrain = !this.state.isGameAniTrainVisible ? null :
+      <img src={AnimatedTrain} className="aniTrain pl-2 pt-0" alt="ani-train" />;
+    const playerAniTrain = !this.state.isPlayerAniTrainVisible ? null :
+      <img src={AnimatedTrain} className="aniTrain pl-2 pt-0" alt="ani-train" />;
+
     const gameChooser = 
       <select className="combobox form-control" name="gameChooser" id="game"
         onChange={this.onSelectedGameChange} value={this.state.gameId}
@@ -158,11 +168,13 @@ class WizardReturnToGame extends React.Component {
 
           <div className="form-group text-left">
             <label htmlFor="game">Game:</label>
+            {gameAniTrain}
             {gameChooser}
           </div>
 
           <div className="form-group text-left">
             <label htmlFor="player">Player:</label>
+            {playerAniTrain}
             {playerChooser}
           </div>
 

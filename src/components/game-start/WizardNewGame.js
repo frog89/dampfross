@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { getFirstRow } from '../../actions/scoreTableActions';
 import { setGameStarting, setStartWizardPage } from '../../actions/startWizardActions';
 import { setAutoReload } from '../../actions/gameActions';
+import AnimatedTrain from '../../images/ani-train.gif';
 
 import * as Constants from '../../constants';
 import './StartWizard.css';
@@ -18,6 +19,8 @@ class WizardNewGame extends React.Component {
     boardId: '',
     boards: [],
     error: '',
+    isAniTrainVisible: false,
+    isShowBoardPreviewVisible: false,
   }
 
   componentDidMount() {
@@ -25,9 +28,10 @@ class WizardNewGame extends React.Component {
   }
 
   fetchBoardNames = () => {
+    this.setState({ isAniTrainVisible: true });    
     axios.get('/boards')
       .then(( { data } ) => {
-        this.setState({ boards: data.boards });
+        this.setState({ isAniTrainVisible: false, boards: data.boards });
         // this.setState({
         //   playerName: "Frank",
         //   gameName: "oesi",
@@ -115,10 +119,27 @@ class WizardNewGame extends React.Component {
   }
   
   onBoardChange = (event) => {
-    this.setState({boardId: event.target.value});
+    let boardId = event.target.value;
+    let boardState = { boardId };
+    if (boardId.length > 0) {
+      boardState = { ...boardState, isShowBoardPreviewVisible: true }
+    } else {
+      boardState = { ...boardState, isShowBoardPreviewVisible: false }
+    }
+    this.setState(boardState);
   }
 
   render() {
+    const aniTrain = !this.state.isAniTrainVisible ? null :
+      <img src={AnimatedTrain} className="aniTrain pl-2 pt-0" alt="ani-train" />;
+
+    let choosenBoard = this.state.boards.find(b => b._id === this.state.boardId);    
+    const boardPreview = !this.state.isShowBoardPreviewVisible ? null :
+      <a href={`/maps/${choosenBoard.mapPicture}`}
+        className="pl-2" 
+        rel="noopener noreferrer"
+        target="_blank">Show Map</a>;
+
     const boardChooser = 
       <select className="combobox form-control" name="boardChooser" id="board"
         onChange={this.onBoardChange} value={this.state.boardId}
@@ -184,6 +205,8 @@ class WizardNewGame extends React.Component {
 
           <div className="form-group text-left">
             <label htmlFor="board">Board:</label>
+            {aniTrain}
+            {boardPreview}
             {boardChooser}
           </div>
 
