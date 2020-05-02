@@ -1,8 +1,9 @@
 const COMB_EMPTY = 1; // Empty
-const COMB_MOUNTAIN = 15; // Mountain
+const COMB_FORREST = 3; // Forrest
+const COMB_UNKNOWN = 5; // Unknown terrain
 const COMB_TOWN = 7; // Town
 const COMB_WATER = 14; // Water (Lake or sea)
-const COMB_UNKNOWN = 5; // Unknown terrain
+const COMB_MOUNTAIN = 15; // Mountain
 const COMB_SPECIAL_POINT = 16; // Specific points like connections to other lands
 
 const TEXTOBJ_VERY_SMALL = 17;
@@ -61,6 +62,8 @@ function getCombTypeName(comb) {
     return 't';
   } else if (comb===COMB_WATER) {
     return 'w';
+  } else if (comb===COMB_FORREST) {
+    return 'f';
   } else if (comb===COMB_UNKNOWN) {
     return 'u';
   } else if (comb===COMB_SPECIAL_POINT) {
@@ -81,6 +84,8 @@ function getCombColor(comb) {
     return 'yellow';
   } else if (comb===COMB_WATER) {
     return '#339CFF';
+  } else if (comb===COMB_FORREST) {
+    return '#3CD200';
   } else if (comb===COMB_UNKNOWN) {
     return '#BEBEBE';
   } else if (comb===COMB_SPECIAL_POINT) {
