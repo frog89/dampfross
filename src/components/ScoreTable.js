@@ -86,7 +86,9 @@ class ScoreTable extends React.Component {
   setRows = (rows) => {
     this.gridOptions.api.setRowData(rows);
     this.props.setScoreTableRows(rows);
-    this.props.cbFuncs.cbSaveGame(this.props.game);
+    let game = {...this.props.game};
+    game.scoreTable.rows = rows;
+    this.props.cbFuncs.cbSaveGame(game);
   }
 
   render() {

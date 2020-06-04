@@ -5,6 +5,7 @@ import ScoreTable from './ScoreTable';
 import { connect } from 'react-redux';
 import { Provider } from 'react-redux';
 import store from '../store';
+import './App.css';
 
 class App extends React.Component {
   render() {

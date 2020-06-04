@@ -1,12 +1,12 @@
-#large-container {
-  overflow: hidden;
+#konvaContainerOuter {
+  transform: rotateX(180deg);
+  width: calc(100% - 0px);
+  height: calc(100% - 0px);
+  overflow: auto;
 }
 
-#scroll-container {
-  width: calc(100%);
-  height: calc(100vh - 70px);
-  overflow: auto;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  border: 1px solid grey;
+#konvaContainer {
+  transform: rotateX(180deg);
+  margin: 0px;
+  border: 0px solid grey;
 }

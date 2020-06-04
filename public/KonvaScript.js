@@ -24,10 +24,10 @@ const combDiffY = COMB_RADIUS * 0.5;
 // so scrolling will look smoother
 const PADDING = 800;
 
-function getBoardDimensionInPixel() {
+function getBoardDimension() {
   return {
-    x: window.innerWidth + PADDING,
-    y: window.innerHeight + PADDING
+    x: combDiffX + konvaState.board.width * combDiffX * 2,
+    y: 2 * COMB_RADIUS + (konvaState.board.height - 1) * COMB_RADIUS * 1.5
   };
 }
 
@@ -405,12 +405,12 @@ function repositionStage(scrollContainer) {
   konvaState.stage.batchDraw();
 }
 
-function initStage(width, height) {
-  let boardDim = getBoardDimensionInPixel();
+function initStage() {
+  let boardDim = getBoardDimension();
   let stage = new Konva.Stage({
     container: 'konvaContainer',
-    width: boardDim.x,
-    height: boardDim.y
+    width: window.innerWidth,
+    height: window.innerHeight * boardDim.x / boardDim.y
   });
   konvaState.stage = stage;
 }
@@ -454,7 +454,7 @@ function drawElements(session, board, game,
     dragLayer = layers[3];
     dragLayer.destroyChildren();
   } else {
-    initStage(width, height);
+    initStage();
     mapLayer = new Konva.Layer();
     drawLayer = new Konva.Layer();
     puppetLayer = new Konva.Layer();
@@ -520,6 +520,6 @@ function drawElements(session, board, game,
   puppetLayer.draw();
   dragLayer.draw();
 
-  scrollContainer.addEventListener('scroll', () => repositionStage(scrollContainer));
-  repositionStage(scrollContainer);  
+  //scrollContainer.addEventListener('scroll', () => repositionStage(scrollContainer));
+  //repositionStage(scrollContainer);  
 }
