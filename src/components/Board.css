@@ -1,12 +1,14 @@
 #konvaContainerOuter {
   transform: rotateX(180deg);
-  width: calc(100% - 0px);
-  height: calc(100% - 0px);
+  width: 100%;
+  height: 100%;
   overflow: auto;
 }
 
 #konvaContainer {
   transform: rotateX(180deg);
+  width: calc(100% - 10px);
+  height: calc(100% - 10px);
   margin: 0px;
   border: 0px solid grey;
 }

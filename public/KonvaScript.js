@@ -410,7 +410,7 @@ function initStage() {
   let stage = new Konva.Stage({
     container: 'konvaContainer',
     width: window.innerWidth,
-    height: window.innerHeight * boardDim.x / boardDim.y
+    height: window.innerWidth * boardDim.y / boardDim.x
   });
   konvaState.stage = stage;
 }
